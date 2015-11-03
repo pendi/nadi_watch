@@ -4,12 +4,12 @@
 		echo "<script>window.location = 'index.php?list=2&head=home';</script>";
 	} else {
 
-		$id = $_SESSION['member']['id'];
-		$query = mysql_query("SELECT * FROM member WHERE id='$id'");
+		$id = $_SESSION['member']['id_member'];
+		$query = mysql_query("SELECT * FROM member WHERE id_member='$id'");
 		$result = mysql_fetch_array($query);
 ?>
 <form method="post" action="process/edit_member.php" onsubmit="return validasi(this)">
-	<input type="hidden" name="id" value="<?php echo $result['id']; ?>">
+	<input type="hidden" name="id" value="<?php echo $result['id_member']; ?>">
 	<table class="width">
 		<tr>
 			<td align="center"><h2>PROFIL</h2></td>
@@ -19,31 +19,31 @@
 		<tr>
 			<td width="135px"><b>Email</b></td>
 			<td colspan="2">
-				<input class="input" type="text" name="email" placeholder="Email" value="<?php echo $result['email']; ?>">
+				<input class="input" type="text" name="email" placeholder="Email" value="<?php echo $result['email_member']; ?>">
 			</td>
 		</tr>
 		<tr>
 			<td><b>Nama Depan</b></td>
 			<td colspan="2">
-				<input class="input" type="text" name="first_name" placeholder="Nama Depan" value="<?php echo $result['first_name']; ?>">
+				<input class="input" type="text" name="first_name" placeholder="Nama Depan" value="<?php echo $result['first_name_member']; ?>">
 			</td>
 		</tr>
 		<tr>
 			<td><b>Nama Belakang</b></td>
 			<td colspan="2">
-				<input class="input" type="text" name="last_name" placeholder="Nama Belakang" value="<?php echo $result['last_name']; ?>">
+				<input class="input" type="text" name="last_name" placeholder="Nama Belakang" value="<?php echo $result['last_name_member']; ?>">
 			</td>
 		</tr>
 		<tr>
 			<td><b>Alamat</b></td>
 			<td colspan="2">
-				<textarea name="address" placeholder="ALamat"><?php echo $result['address']; ?></textarea>
+				<textarea name="address" placeholder="ALamat"><?php echo $result['address_member']; ?></textarea>
 			</td>
 		</tr>
 		<tr>
 			<td><b>Telephone</b></td>
 			<td colspan="2">
-				<input class="input" type="text" name="telp" placeholder="Telephone" value="<?php echo $result['telp']; ?>">
+				<input class="input" type="text" name="telp" placeholder="Telephone" value="<?php echo $result['telp_member']; ?>">
 			</td>
 		</tr>
 		<tr>

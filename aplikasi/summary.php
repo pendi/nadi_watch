@@ -18,9 +18,13 @@
 	$data = mysql_fetch_array($query);
 	$queryOrd = mysql_query("SELECT * FROM orders WHERE id_order='$id_order'");
 	$dataOrd = mysql_fetch_array($queryOrd);
+	$selectFare = mysql_query("SELECT tarif FROM tarif WHERE id_tarif='$dataOrd[id_tarif]'");
+	$dataFare = mysql_fetch_array($selectFare);
 ?>
 <style type="text/css">
 	.info{ border: 2px dashed #999; height: 70px; padding-top: 18px; padding-left: 7px; }
+	td.left { padding-left: 7px; }
+	span.price { float:right; padding-right:7px; }
 </style>
 <table width="95%" align="center">
 	<tr>
@@ -39,22 +43,22 @@
 				<tr>
 					<td><b>Email</b></td>
 					<td>:</td>
-					<td><?php echo $data['email']; ?></td>
+					<td><?php echo $data['email_cus']; ?></td>
 				</tr>
 				<tr>
 					<td width="118px"><b>Nama Lengkap</b></td>
 					<td width="10px">:</td>
-					<td><?php echo ucwords($data['first_name']); ?> <?php echo ucwords($data['last_name']); ?></td>
+					<td><?php echo ucwords($data['first_name_cus']); ?> <?php echo ucwords($data['last_name_cus']); ?></td>
 				</tr>
 				<tr>
 					<td style="vertical-align:top;"><b>Alamat</b></td>
 					<td style="vertical-align:top;">:</td>
-					<td><?php echo $data['address']; ?></td>
+					<td><?php echo $data['address_cus']; ?></td>
 				</tr>
 				<tr>
 					<td><b>Nomor Telepon</b></td>
 					<td>:</td>
-					<td><?php echo $data['telp']; ?></td>
+					<td><?php echo $data['telp_cus']; ?></td>
 				</tr>
 			</table>
 		</td>
@@ -71,46 +75,53 @@
 		$total = 0;
 		$grandTotal = 0;
 		$discount = 0;
+		$ongkir = ceil($dataOrd['weight_order'])*$dataFare['tarif'];
 		$queryTrs = mysql_query("SELECT * FROM transaksi WHERE id_order='$dataOrd[id_order]'");
 		while($dataTrs = mysql_fetch_array($queryTrs)){
 			$queryPro = mysql_query("SELECT * FROM product WHERE id_product='$dataTrs[id_product]'");
 			$dataPro = mysql_fetch_array($queryPro);
-			$sub_total = $dataPro['price'] * $dataTrs['quantity'];
+			$sub_total = $dataPro['price'] * $dataTrs['quantity_trans'];
 			if (!empty($dataOrd['id_member'])) {
 				$grandTotal += $sub_total;
-				$discount = (($grandTotal*10)/100);
-				$total = $grandTotal - $discount;
+				$grandTotals = $grandTotal + $ongkir;
+				$discount = (($grandTotals*10)/100);
+				$totals = $grandTotals - $discount;
 			} else {
 				$total += $sub_total;
+				$totals = $total + $ongkir;
 			}
 	?>
 	<tr style="height:50px;">
 		<td align="center"><?php echo $no; ?></td>
-		<td><?php echo $dataPro['name']; ?> <?php echo $dataPro['type'] ?></td>
+		<td class="left"><?php echo $dataPro['name_product']; ?> <?php echo $dataPro['type'].' - '.$dataPro['color'] ?></td>
 		<td align="center">Rp. <?php echo price($dataPro['price']); ?></td>
-		<td align="center"><?php echo $dataTrs['quantity']; ?></td>
-		<td align="center">Rp. <?php echo price($sub_total); ?></td>
+		<td align="center"><?php echo $dataTrs['quantity_trans']; ?></td>
+		<td class="left">Rp. <span class="price"><?php echo price($sub_total); ?></span></td>
 	</tr>
 	<?php
 		$no++;
 	 	}
 	?>
+	<tr style="height:50px;">
+		<td colspan="4" align="right"><span style="margin-right: 3px;">Ongkos Kirim</span></td>
+		<td class="left">Rp. <span class="price"><?php echo price($ongkir); ?></span></td>
+	</tr>
 	<?php if(!empty($dataOrd['id_member'])): ?>
 		<tr style="height:50px;">
 			<td colspan="4" align="right"><b style="margin-right: 3px;">Sub Total</b></td>
-			<td align="center"><b>Rp. <?php echo price($grandTotal); ?></b></td>
+			<td class="left"><b>Rp. <span class="price"><?php echo price($grandTotals); ?></span></b></td>
 		</tr>
 		<tr style="height:50px;">
 			<td colspan="4" align="right"><span style="margin-right: 3px;">Diskon Member</span></td>
-			<td align="center">Rp. <?php echo price($discount); ?></td>
+			<td class="left">Rp. <span class="price"><?php echo price($discount); ?></span></td>
 		</tr>
 	<?php endif ?>
 	<tr style="height:50px;">
 		<td colspan="4" align="right"><b style="margin-right: 3px;">Total Belanja</b></td>
-		<td align="center"><b>Rp. <?php echo price($total); ?></b></td>
+		<td class="left"><b>Rp. <span class="price"><?php echo price($totals); ?></span></b></td>
 	</tr>
 </table>
 <div style="padding:10px 0 0 23px;">
-	<a href="index.php?list=4&act=print&id_cus=<?php echo $id_cus; ?>&id_order=<?php echo $id_order; ?>" class="button round">Benar</a>
-	<a href="index.php?list=22&id_cus=<?php echo $id_cus; ?>&id_order=<?php echo $id_order; ?>" class="button round warning">Kembali</a>
+	<a href="index.php?list=4&act=print&id_cus=<?php echo $id_cus; ?>&id_order=<?php echo $id_order; ?>&total=<?php echo $totals ?>" class="button round">Benar</a>
+	<a href="index.php?list=36&id_cus=<?php echo $id_cus; ?>&id_order=<?php echo $id_order; ?>" class="button round warning">Kembali</a>
 </div>

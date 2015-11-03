@@ -140,6 +140,46 @@ switch($list)
 	include "aplikasi/edit_member.php";
 	break;
 
+	case "33";
+	include "aplikasi/confirm.php";
+	break;
+
+	case "34";
+	include "aplikasi/step_order.php";
+	break;
+
+	case "35";
+	include "aplikasi/contact.php";
+	break;
+
+	case "36";
+	include "aplikasi/fare.php";
+	break;
+
+	case "37";
+	include "admin/list_member.php";
+	break;
+
+	case "38";
+	include "admin/trans_confirm.php";
+	break;
+
+	case "39";
+	include "export.php";
+	break;
+
+	case "40";
+	include "admin/list_fare.php";
+	break;
+
+	case "41";
+	include "admin/edit_city.php";
+	break;
+
+	case "40";
+	include "admin/delete_city.php";
+	break;
+
 	default;
 	include "aplikasi/index.php";
 	break;

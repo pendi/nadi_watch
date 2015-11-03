@@ -4,10 +4,12 @@
 	<title>nadiWatch.com</title>
 	<link rel="stylesheet" type="text/css" href="css/global.css">
 	<link rel="stylesheet" type="text/css" href="css/font/stylesheet.css">
+	<link rel="stylesheet" type="text/css" href="js/datepicker/jquery-ui.css">
 	<!-- <link rel="stylesheet" type="text/css" href="../css/naked.css"> -->
 	<!-- <link rel="shortcut icon" href="../image/favicon/favicon.ico" type="image/x-icon" /> -->
 	<link rel="shortcut icon" href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/favicon/favicon.ico' ?>" type="image/x-icon" />
 	<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="js/datepicker/jquery-ui.js"></script>
 	<script>
 		function validasi(form) {
 			if (form.search.value == ""){
@@ -19,18 +21,8 @@
 	</script>
 
 	<style type="text/css">
-		.search {
-			margin: 7px 10px;
-			width: 23%;
-			height: 28px;
-			border-radius: 30px;
-			outline-style: none;
-			padding-left: 7px;
-		}
-
-		img.padding {
-			padding-right: 4px;
-		}
+		.search { margin: 7px 10px; width: 23%; height: 28px; border-radius: 30px; outline-style: none; padding-left: 7px; }
+		img.padding { padding-right: 4px; }
 	</style>
 </head>
 <body bgcolor="#80B2FF">
@@ -61,13 +53,14 @@
 			$totalCart = 0;
 		}
 
-		if (isset($_SESSION['user'])) {
-			$idUser = $_SESSION['user']['id'];
-			$queryUser = mysql_query("SELECT * FROM user WHERE id='$idUser'");
-			$resultUser = mysql_fetch_array($queryUser);
-		} elseif (isset($_SESSION['member'])) {
-			$idMember = $_SESSION['member']['id'];
-			$queryMember = mysql_query("SELECT * FROM member WHERE id='$idMember'");
+		// if (isset($_SESSION['user'])) {
+		// 	$idUser = $_SESSION['user']['id'];
+		// 	$queryUser = mysql_query("SELECT * FROM user WHERE id='$idUser'");
+		// 	$resultUser = mysql_fetch_array($queryUser);
+		// } else
+		if (isset($_SESSION['member'])) {
+			$idMember = $_SESSION['member']['id_member'];
+			$queryMember = mysql_query("SELECT * FROM member WHERE id_member='$idMember'");
 			$resultMember = mysql_fetch_array($queryMember);
 		}
 
@@ -77,10 +70,14 @@
 			$id_order = "";
 		}
 
-		autoDelete("customer");
-		autoDelete("orders");
-		autoDelete("orders_temp");
-		autoDelete("transaksi");
+		$dataVendor = mysql_query("SELECT * FROM vendor ORDER BY name_vendor ASC");
+		$dataVendor2 = mysql_query("SELECT * FROM vendor ORDER BY name_vendor ASC");
+		$dataVendor3 = mysql_query("SELECT * FROM vendor ORDER BY name_vendor ASC");
+
+		// autoDelete("customer");
+		// autoDelete("orders");
+		// autoDelete("orders_temp");
+		// autoDelete("transaksi");
 	?>
 	<div class="row-header radius">
 		<table class="width">
@@ -93,17 +90,11 @@
 					<span class="subHeaderName">Menjual Jam Tangan Baru dan Bergaransi</span>
 				</td>
 				<td width="35%" align="right" style="vertical-align: top;">
-					<?php if (isset($_SESSION["user"]) || isset($_SESSION['member'])): ?>
-						<?php if (isset($_SESSION['user'])): ?>
-							<a href="index.php?list=16&head=admin" class="href">
-								<font color="#fff">
-									<?php echo ucfirst($resultUser['first_name']); ?> <?php echo ucfirst($resultUser['last_name']); ?>
-								</font>
-							</a>
-						<?php elseif (isset($_SESSION['member'])): ?>
+					<?php if (isset($_SESSION['member'])): ?>
+						<?php if (isset($_SESSION['member'])): ?>
 							<a href="index.php?list=32" class="href">
 								<font color="#fff">
-									<?php echo ucfirst($resultMember['first_name']); ?> <?php echo ucfirst($resultMember['last_name']); ?>
+									<?php echo ucfirst($resultMember['first_name_member']); ?> <?php echo ucfirst($resultMember['last_name_member']); ?>
 								</font>
 							</a>
 						<?php endif ?>
@@ -124,27 +115,42 @@
 						<li>
 							<a href="#">Fashion</a>
 							<ul class="dropdown">
-								<li><a href="index.php?list=30&cat=fashion&gen=pria" class="droplist mens">Pria</a></li>
-								<li class="womens"><a href="index.php?list=30&cat=fashion&gen=wanita" class="droplist">Wanita</a></li>
+								<?php while($resultVendor=mysql_fetch_array($dataVendor)): ?>
+									<li>
+										<a href="<?php echo "index.php?list=30&cat=fashion&vendor=$resultVendor[id_vendor]" ?>" class="droplist"><?php echo ucwords($resultVendor['name_vendor']); ?></a>
+									</li>
+								<?php endwhile ?>
 							</ul>
 						</li>
 						<li>
 							<a href="#">Casual</a>
 							<ul class="dropdown">
-								<li><a href="index.php?list=30&cat=casual&gen=pria" class="droplist mens">Pria</a></li>
-								<li class="womens"><a href="index.php?list=30&cat=casual&gen=wanita" class="droplist">Wanita</a></li>
+								<?php while($resultVendor=mysql_fetch_array($dataVendor2)): ?>
+									<li>
+										<a href="<?php echo "index.php?list=30&cat=casual&vendor=$resultVendor[id_vendor]" ?>" class="droplist"><?php echo ucwords($resultVendor['name_vendor']); ?></a>
+									</li>
+								<?php endwhile ?>
 							</ul>
 						</li>
 						<li>
 							<a href="#">Sport</a>
 							<ul class="dropdown">
-								<li><a href="index.php?list=30&cat=sport&gen=pria" class="droplist mens">Pria</a></li>
-								<li class="womens"><a href="index.php?list=30&cat=sport&gen=wanita" class="droplist">Wanita</a></li>
+								<?php while($resultVendor=mysql_fetch_array($dataVendor3)): ?>
+									<li>
+										<a href="<?php echo "index.php?list=30&cat=sport&vendor=$resultVendor[id_vendor]" ?>" class="droplist"><?php echo ucwords($resultVendor['name_vendor']); ?></a>
+									</li>
+								<?php endwhile ?>
 							</ul>
 						</li>
-						<!-- <li>
+						<li>
 							<a href="index.php?list=31">Pemesanan</a>
-						</li> -->
+						</li>
+						<li>
+							<a href="index.php?list=34">Cara Order</a>
+						</li>
+						<li>
+							<a href="index.php?list=35">Kontak Kami</a>
+						</li>
 					</ul>
 				</td>
 				<td width="7%">
@@ -161,13 +167,7 @@
 			<table class="width">
 				<tr>
 					<td align="right">
-						<?php if(isset($_GET['cat'])): ?>
-							<input type="hidden" name="cat" value="<?php echo $_GET['cat']; ?>">
-							<input type="hidden" name="gen" value="<?php echo $_GET['gen']; ?>">
-							<input type="hidden" name="list" value="30">
-						<?php else: ?>
-							<input type="hidden" name="list" value="1">
-						<?php endif ?>
+						<input type="hidden" name="list" value="1">
 						<input class="search" type="search" name="search" placeholder="Cari Produk">
 					</td>
 				</tr>

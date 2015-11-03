@@ -1,13 +1,13 @@
 <?php
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} else {
 
 	$query = mysql_query("SELECT * FROM product WHERE id_product = '$_GET[id_product]'");
 	$data = mysql_fetch_array($query);
 
-	$sql = mysql_query("SELECT * FROM vendor ORDER BY name ASC");
+	$sql = mysql_query("SELECT * FROM vendor ORDER BY name_vendor ASC");
 ?>
 <form action="process/edit_product.php" method="post" enctype="multipart/form-data" onsubmit="return validasi(this)">
 	<input type="hidden" name="id" value="<?php echo $data['id_product']; ?>" />
@@ -27,7 +27,7 @@
 				<select name="vendor" size="0">
 					<option value="0">Pilih Vendor</option>
 					<?php while($r = mysql_fetch_array($sql)): ?>
-						<option value="<?php echo $r['id']; ?>" <?php if($data['vendor_id'] == $r['id']){ echo "selected"; } ?>><?php echo ucwords($r['name']); ?></option>
+						<option value="<?php echo $r['id_vendor']; ?>" <?php if($data['id_vendor'] == $r['id_vendor']){ echo "selected"; } ?>><?php echo ucwords($r['name_vendor']); ?></option>
 					<?php endwhile ?>
 				</select>
 			</td>
@@ -35,7 +35,7 @@
 		<tr>
 			<td></td>
 			<td>Nama &nbsp;</td>
-			<td><input type="text" class="input" name="name" placeholder="Nama" value="<?php echo $data['name']; ?>"></td>
+			<td><input type="text" class="input" name="name" placeholder="Nama" value="<?php echo $data['name_product']; ?>"></td>
 		</tr>
 		<tr>
 			<td></td>
@@ -61,6 +61,11 @@
 			<td></td>
 			<td>Stok &nbsp;</td>
 			<td><input type="number" class="input" name="stock" placeholder="Stok" value="<?php echo $data['stock']; ?>"></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>Berat &nbsp;</td>
+			<td><input type="text" class="input" name="weight" placeholder="Berat" value="<?php echo $data['weight_product']; ?>"></td>
 		</tr>
 		<tr>
 			<td width="20%"></td>
@@ -89,8 +94,8 @@
 			<td></td>
 			<td>Gambar</td>
 			<td>
-				<?php if (!empty($data['image'])): ?>				
-					<img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/'.$data['image']; ?>" width="150px"><br/>
+				<?php if (!empty($data['image_product'])): ?>				
+					<img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/'.$data['image_product']; ?>" width="150px"><br/>
 				<?php else : ?>
 					<img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/product/no-image.jpg' ?>" width="150px"><br/>
 				<?php endif ?>

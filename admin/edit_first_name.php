@@ -1,7 +1,7 @@
 <?php
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} else {
 
 	$query = mysql_query("SELECT * FROM user WHERE id='$_GET[id]'");

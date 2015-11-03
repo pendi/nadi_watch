@@ -2,6 +2,8 @@
 $act = $_GET['act'];
 
 include "koneksi.php";
+require_once "Mail/Mail/Mail.php";
+require_once "Mail/Mail/mime.php";
 
 $invoice = invoice();
 
@@ -19,19 +21,19 @@ if(isset($_GET['id'])) {
 
 if ($act == "footer") {
 	if (isset($_SESSION['user'])) {
-		header("Location:index.php?list=4&act=admin&head=home");
+		echo "<script>window.location = 'index.php?list=4&act=admin';</script>";
 	} else {
-		header("Location:index.php?list=5&head=home");
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	}
 } elseif ($act == "admin") {
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} else {
 		if ($_SESSION['user']['level'] == "super admin") {
-			header("Location:index.php?list=6&head=admin");
+			echo "<script>window.location = 'index.php?list=6&head=admin';</script>";
 		} elseif ($_SESSION['user']['level'] == "admin") {
-			header("Location:index.php?list=8&head=admin");
+			echo "<script>window.location = 'index.php?list=8&head=admin';</script>";
 		}
 	}
 } elseif ($act == 'add') {
@@ -51,7 +53,7 @@ if ($act == "footer") {
 	$selectAdd = mysql_query("SELECT * FROM orders_temp WHERE id_product='$id' AND id_session='$idt'");
 	$numRowAdd = mysql_num_rows($selectAdd);
 	if ($numRowAdd == 0) {
-		$insert = mysql_query("INSERT INTO orders_temp(id_order_temp,id_product,id_session,quantity,created_time) 
+		$insert = mysql_query("INSERT INTO orders_temp(id_order_temp,id_product,id_session,quantity,created_time_temp) 
 	            VALUES('$nextNoTransaksi','$id','$idt','1','$time')");
 	} else {
 		$selectPro = mysql_query("SELECT stock FROM product WHERE id_product = '$id'");
@@ -107,44 +109,72 @@ if ($act == "footer") {
 } elseif ($act == 'print') { 
 	$id_cus = $_GET['id_cus'];
 	$id_order = $_GET['id_order'];
+	$total = $_GET['total'];
 	
 
-	$updateInv = mysql_query("UPDATE orders SET invoice='$invoice', status='1' WHERE id_cus='$id_cus'");
+	$updateInv = mysql_query("UPDATE orders SET invoice='$invoice', status_order='1', total='$total' WHERE id_cus='$id_cus'");
 	$queryOrd = mysql_query("SELECT * FROM orders WHERE id_cus='$id_cus'");
 	$dataOrd = mysql_fetch_array($queryOrd);
 	$queryTrs = mysql_query("SELECT * FROM transaksi WHERE id_order='$dataOrd[id_order]'");
 	while($dataTrs = mysql_fetch_array($queryTrs)){
 		$queryPro = mysql_query("SELECT * FROM product WHERE id_product='$dataTrs[id_product]'");
 		$dataPro = mysql_fetch_array($queryPro);
-		$updateStok = mysql_query("UPDATE product SET stock='$dataPro[stock]'-'$dataTrs[quantity]', sale='$dataPro[sale]'+'$dataTrs[quantity]' WHERE id_product='$dataTrs[id_product]'");
-		$selectSale = mysql_query("SELECT * FROM vendor WHERE id='$dataPro[vendor_id]'");
+		$updateStok = mysql_query("UPDATE product SET stock='$dataPro[stock]'-'$dataTrs[quantity_trans]', sale_product='$dataPro[sale_product]'+'$dataTrs[quantity_trans]' WHERE id_product='$dataTrs[id_product]'");
+		$selectSale = mysql_query("SELECT * FROM vendor WHERE id_vendor='$dataPro[id_vendor]'");
 		$dataSale = mysql_fetch_array($selectSale);
-		$updateSale = mysql_query("UPDATE vendor SET sale='$dataSale[sale]'+'$dataTrs[quantity]' WHERE id='$dataPro[vendor_id]'");
+		$updateSale = mysql_query("UPDATE vendor SET sale_vendor='$dataSale[sale_vendor]'+'$dataTrs[quantity_trans]' WHERE id_vendor='$dataPro[id_vendor]'");
 
-		$messageProduct = "- ".$dataPro['name']." ".$dataPro['type']."<br/>";
-	// var_dump($messageProduct);exit();
+		// $messageProduct = "- ".$dataPro['name_product']." ".$dataPro['type']."<br/>";
 	}
 
-	$selectCus = mysql_query("SELECT * FROM customer WHERE id_cus='$id_cus'");
-	$dataCus = mysql_fetch_array($selectCus);
-	$to = $dataCus['email'];
-	$subject = "Pesanan Anda Pada nadiwatch.com";
-	$message = "Pesanan Anda<br />".$messageProduct;
-
-	$headers = "MIME-Version: 1.0" . "\r\n";
-	$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
-
-	$headers .= 'From: nadiwatch.com <noreply@nadiwatch.com>'."\r\n" . 'Reply-To: '.$dataCus['first_name'].' '.$dataCus['last_name'].' <'.$dataCus['email'].'>'."\r\n";
-	mail($to,$subject,$message,$headers);
-	if(mail)
-	{
-		echo "Email sent successfully !!";	
-	}
-	var_dump('expression');exit();
 	
 	if ($updateStok) {
 		$deleteOt = mysql_query("DELETE FROM orders_temp WHERE id_session='$idt'");
-		echo "<script>window.location = 'aplikasi/print.php?id_cus=$id_cus&id_order=$id_order';</script>";
+
+		$selectCus = mysql_query("SELECT email_cus FROM customer WHERE id_cus='$id_cus'");
+		$dataCus = mysql_fetch_array($selectCus);
+
+		$from = '<nadiwatch@gmail.com>';
+		$to = '<'.$dataCus['email_cus'].'>';
+		// $cc = '<nadiwatch@gmail.com>';
+		// $recipients = $to.", ".$cc;
+
+		$subject = 'Pesanan Anda';
+		$html = 
+			"Anda sudah berhasil melakukan pemesanan di <span class='nameTitle'>nadiwatch.com</span><br>
+			Segera lakukan <a href='http://localhost/nadi_watch/index.php?list=31' class='href'>konfirmasi pembayaran</a> agar pesanan anda bisa segera diproses";
+		
+		$headers['From']    = $from;
+		$headers['To']      = $to;
+		$headers['Subject'] = $subject;
+		// $headers['Cc']      = $cc;
+
+		$crlf = "\n";
+
+		$mime = new Mail_mime($crlf);
+
+		$mime->setHTMLBody($html);
+
+		$body = $mime->get();
+		$headers = $mime->headers($headers);
+
+		$smtp = Mail::factory('smtp', array(
+		        'host' => 'ssl://smtp.gmail.com',
+		        'port' => '465',
+		        'auth' => true,
+		        'username' => 'nadiwatch@gmail.com',
+		        'password' => 'nadiwatchpassword'
+		    ));
+
+		$mail = $smtp->send($to, $headers, $body);
+		// $mail = $smtp->send($recipients, $headers, $body);
+
+		if (PEAR::isError($mail)) {
+		    echo('<p>' . $mail->getMessage() . '</p>');
+			echo "<script>window.location = 'aplikasi/print.php?id_cus=$id_cus&id_order=$id_order';</script>";
+		} else {
+			echo "<script>window.location = 'aplikasi/print.php?id_cus=$id_cus&id_order=$id_order';</script>";
+		}
 	}
 
 }

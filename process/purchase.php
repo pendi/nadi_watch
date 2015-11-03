@@ -10,6 +10,7 @@
 
 	$id = $_POST['id'];
 	$qty = $_POST['quantity'];
+	$weight = $_POST['weight'];
 
 
 	$timeTrs = date("Ymd");
@@ -23,8 +24,8 @@
 	$nextNoOrder = $kode.sprintf('%03s', $nextNoUrut);
 
 	$time = date("Y-m-d");
-	$query = "INSERT INTO orders(id_order,id_cus,id_member,invoice,status,created_time) 
-				VALUES('$nextNoOrder','','','','','$time')";
+	$query = "INSERT INTO orders(id_order,id_cus,id_member,invoice,status_order,total,weight_order,id_tarif,created_time_order) 
+				VALUES('$nextNoOrder','','','','','','$weight','','$time')";
 	$hasil = mysql_query($query);
 
 	$sql = mysql_query("SELECT max(id_order) AS idOrd FROM orders LIMIT 1");
@@ -32,8 +33,8 @@
 	$idOrd = $row['idOrd'];
 
 	foreach($qty as $key => $value){
-		$sql = "INSERT INTO transaksi(id,id_order,id_product,quantity,created_time)
-		values (null,'{$idOrd}','{$id[$key]}','{$value}','{$time}')";
+		$sql = "INSERT INTO transaksi(id_order,id_product,quantity_trans,created_time_trans)
+		values ('{$idOrd}','{$id[$key]}','{$value}','{$time}')";
 		mysql_query($sql);
 	}
 

@@ -43,8 +43,8 @@
 		include "function/function.php";
 
 		if (isset($_SESSION['user'])) {
-			$id = $_SESSION['user']['id'];
-			$query = mysql_query("SELECT * FROM user WHERE id='$id'");
+			$id = $_SESSION['user']['id_admin'];
+			$query = mysql_query("SELECT * FROM admin WHERE id_admin='$id'");
 			$result = mysql_fetch_array($query);
 		}
 	?>
@@ -62,7 +62,7 @@
 					<?php if(isset($_SESSION['user'])): ?>
 						<a href="index.php?list=16&head=admin" class="href">
 							<font color="#fff">
-								<?php echo ucwords($result['first_name']); ?> <?php echo ucwords($result['last_name']); ?>
+								<?php echo ucwords($result['first_name_admin']); ?> <?php echo ucwords($result['last_name_admin']); ?>
 							</font>
 						</a> ||
 						<a href="index.php?list=7&head=home" class="href">Keluar &nbsp;</a>
@@ -71,21 +71,24 @@
 			</tr>
 		</table>
 	</div>
-	<div class="row-menu radius">
-		<table class="width">
-			<tr>
-				<td>
-					<ul class="dropmenu">
-						<li><a href="index.php?list=4&act=admin&head=admin">Dashboard</a></li>
-						<li><a href="index.php?list=25&head=admin">Vendor</a></li>
-						<li><a href="index.php?list=29&head=admin">Transaksi</a></li>
-						<li><a href="index.php?list=16&head=admin">Profil</a></li>
-						<!-- <li><a href="../admin/grafik.php">Grafik Penjualan</a></li> -->
-					</ul>
-				</td>
-			</tr>
-		</table>
-	</div>
+	<?php if (isset($_SESSION['user'])): ?>
+		<div class="row-menu radius">
+			<table class="width">
+				<tr>
+					<td>
+						<ul class="dropmenu">
+							<li><a href="index.php?list=4&act=admin&head=admin">Dashboard</a></li>
+							<li><a href="index.php?list=25&head=admin">Vendor</a></li>
+							<li><a href="index.php?list=29&head=admin">Transaksi</a></li>
+							<li><a href="index.php?list=37&head=admin">Member</a></li>
+							<!-- <li><a href="index.php?list=40&head=admin">Ongkir</a></li> -->
+							<!-- <li><a href="../admin/grafik.php">Grafik Penjualan</a></li> -->
+						</ul>
+					</td>
+				</tr>
+			</table>
+		</div>		
+	<?php endif ?>
 	<div class="row-isi radius-top">
 		<div>&nbsp;</div>
 		<!-- <form action="../search/search_admin.php" method="post" onsubmit="return validasi(this)">

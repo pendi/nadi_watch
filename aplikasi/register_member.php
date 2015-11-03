@@ -1,5 +1,5 @@
 <form action="process/register_member.php" method="post" onsubmit="return validasi(this)">
-	<table width="75%" align="center" bgcolor="#E6E6E6">
+	<table align="center">
 		<tr>
 			<td colspan="3"><center><h2>DAFTAR MEMBER</h2></center></td>
 		</tr>
@@ -7,50 +7,40 @@
 			<td colspan="3">&nbsp;</td>
 		</tr>
 		<tr>
-			<td width="15%"></td>
-			<td width="55%">Email &nbsp;</td>
-			<td width="5%">
-				<input autofocus type="text" class="input" name="email" placeholder="Email">
+			<td width="135px">Email</td>
+			<td colspan="2">
+				<input autofocus type="text" class="input" name="email" placeholder="Email" id="email">
 			</td>
 		</tr>
 		<tr>
-			<td></td>
-			<td>Nama Depan &nbsp;</td>
-			<td>
+			<td>Nama Depan</td>
+			<td colspan="2">
 				<input type="text" class="input" name="first_name" placeholder="Nama Depan">
 			</td>
 		</tr>
 		<tr>
-			<td></td>
-			<td>Nama Belakang &nbsp;</td>
-			<td>
+			<td>Nama Belakang</td>
+			<td colspan="2">
 				<input type="text" class="input" name="last_name" placeholder="Nama Belakang">
 			</td>
 		</tr>
 		<tr>
-			<td></td>
-			<td style="vertical-align: top;">Alamat &nbsp;</td>
-			<td>
+			<td style="vertical-align: top;">Alamat</td>
+			<td colspan="2">
 				<textarea rows="5" cols="20" class="input" name="address" placeholder="Alamat Lengkap"></textarea>
 			</td>
 		</tr>
 		<tr>
-			<td></td>
-			<td>Telephone &nbsp;</td>
-			<td>
+			<td>Telephone</td>
+			<td colspan="2">
 				<input type="text" class="input" name="telp" placeholder="Telephone">
 			</td>
 		</tr>
 		<tr>
-			<td></td>
-			<td>Password &nbsp;</td>
+			<td>Password</td>
 			<td>
 				<input type="password" class="input" name="password" placeholder="Password">
 			</td>
-		</tr>
-		<tr>
-			<td></td>
-			<td>Konfirmasi Password &nbsp;</td>
 			<td>
 				<input type="password" class="input" name="conf_password" placeholder="Konfirmasi Password">
 			</td>
@@ -73,6 +63,13 @@
 			alert("Anda belum mengisikan Email.");
 			form.email.focus();
 			return (false);
+		} else {
+			var email=document.getElementById('email').value;
+			if ((email.indexOf('@',0)==-1) || (email.indexOf('.',0)==-1)) { 
+				alert("Alamat Email anda tidak valid");  
+				form.email.focus();
+				return (false);
+			}			
 		}
 		if (form.first_name.value == ""){
 			alert("Anda belum mengisikan Nama Depan.");

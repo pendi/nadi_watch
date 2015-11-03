@@ -1,14 +1,14 @@
 <?php
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} elseif ($_SESSION['user']['level'] == "admin") {
 		echo "<script>window.alert('Maaf Anda Tidak Memiliki Hak Akses');</script>";
 		echo "<script>window.location = 'index.php?list=8&head=admin';</script>";
 	} else {
 ?>
 <form action="process/register_admin.php" method="post" onsubmit="return validasi(this)">
-	<table width="75%" align="center" bgcolor="#E6E6E6">
+	<table align="center">
 		<tr>
 			<td colspan="3"><center><h2>TAMBAH ADMIN</h2></center></td>
 		</tr>
@@ -16,44 +16,35 @@
 			<td colspan="3">&nbsp;</td>
 		</tr>
 		<tr>
-			<td width="10%"></td>
-			<td width="15%">Email &nbsp;</td>
-			<td width="35%">
-				<input autofocus type="text" class="input" name="email" placeholder="Email">
+			<td width="135px">Email</td>
+			<td colspan="2">
+				<input autofocus type="text" class="input" name="email" placeholder="Email" id="email">
 			</td>
 		</tr>
 		<tr>
-			<td></td>
-			<td>Nama Depan &nbsp;</td>
-			<td>
+			<td>Nama Depan</td>
+			<td colspan="2">
 				<input type="text" class="input" name="first_name" placeholder="Nama Depan">
 			</td>
 		</tr>
 		<tr>
-			<td></td>
-			<td>Nama Belakang &nbsp;</td>
-			<td>
+			<td>Nama Belakang</td>
+			<td colspan="2">
 				<input type="text" class="input" name="last_name" placeholder="Nama Belakang">
 			</td>
 		</tr>
 		<tr>
-			<td></td>
-			<td>Password &nbsp;</td>
+			<td>Password</td>
 			<td>
 				<input type="password" class="input" name="password" placeholder="Password">
 			</td>
-		</tr>
-		<tr>
-			<td></td>
-			<td>Konfirmasi Password &nbsp;</td>
 			<td>
 				<input type="password" class="input" name="conf_password" placeholder="Konfirmasi Password">
 			</td>
 		</tr>
 		<tr>
-			<td></td>
-			<td>Status &nbsp;</td>
-			<td>
+			<td>Status</td>
+			<td colspan="2">
 				<select name="status" size="0">
 					<option value="0">Pilih Status</option>
 					<option value="super admin">Super Admin</option>
@@ -80,6 +71,13 @@
 			alert("Anda belum mengisikan Email.");
 			form.email.focus();
 			return (false);
+		} else {
+			var email=document.getElementById('email').value;
+			if ((email.indexOf('@',0)==-1) || (email.indexOf('.',0)==-1)) { 
+				alert("Alamat Email anda tidak valid");  
+				form.email.focus();
+				return (false);
+			}			
 		}
 		if (form.first_name.value == ""){
 			alert("Anda belum mengisikan Nama Depan.");

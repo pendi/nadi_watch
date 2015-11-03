@@ -8,7 +8,7 @@
 	$level = trim($_POST['level']);
 	$password = md5(trim($_POST['password']));
 
-	$updateMember = mysql_query("UPDATE user SET email='$email',first_name='$first_name',last_name='$last_name',level='$level',password='$password' WHERE id='$id'");
+	$updateMember = mysql_query("UPDATE admin SET email_admin='$email',first_name_admin='$first_name',last_name_admin='$last_name',level='$level',password='$password' WHERE id_admin='$id'");
 
 	echo "<script>window.location = '../index.php?list=16&head=admin';</script>";
 ?>

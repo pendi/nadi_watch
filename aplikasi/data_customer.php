@@ -22,8 +22,8 @@
 	}
 
 	if(isset($_SESSION['member'])) { 
-		$id = $_SESSION['member']['id']; 
-		$selectMember = mysql_query("SELECT * FROM member WHERE id = '$id'");
+		$id = $_SESSION['member']['id_member']; 
+		$selectMember = mysql_query("SELECT * FROM member WHERE id_member = '$id'");
 		$dataMember = mysql_fetch_array($selectMember);
 	}
 	
@@ -35,7 +35,7 @@
 </style>
 <form action="process/data_customer.php" method="post" onsubmit="return validasi(this)">
 	<input type="hidden" name="id_order" value="<?php echo $_GET['id_order']; ?>">
-	<input type="hidden" name="id_cus" value="<?php if(isset($_GET['id_cus'])){ echo $dataCus['id_cus'];}elseif(isset($_SESSION['member'])){ echo $dataMember['id'];} ?>">
+	<input type="hidden" name="id_cus" value="<?php if(isset($_GET['id_cus'])){ echo $dataCus['id_cus'];}elseif(isset($_SESSION['member'])){ echo $dataMember['id_member'];} ?>">
 
 	<table width="70%" align="center">
 		<tr>
@@ -45,23 +45,23 @@
 	<table width="70%" align="center">
 		<tr>
 			<td><b>Email</b></td>
-			<td><input autofocus type="text" class="input" name="email" placeholder="Email" value="<?php if(isset($_GET['id_cus'])){ echo $dataCus['email'];} if(isset($_SESSION['member'])){ echo $dataMember['email'];} ?>"></td>
+			<td><input id="email" autofocus type="text" class="input" name="email" placeholder="Email" value="<?php if(isset($_GET['id_cus'])){ echo $dataCus['email_cus'];} elseif(isset($_SESSION['member'])){ echo $dataMember['email_member'];} ?>"></td>
 		</tr>
 		<tr>
 			<td width="20%"><b>Nama Depan</b></td>
-			<td><input type="text" class="input" name="first_name" placeholder="Nama Depan" value="<?php if(isset($_GET['id_cus'])){ echo $dataCus['first_name'];}elseif(isset($_SESSION['member'])){ echo $dataMember['first_name'];} ?>"></td>
+			<td><input type="text" class="input" name="first_name" placeholder="Nama Depan" value="<?php if(isset($_GET['id_cus'])){ echo $dataCus['first_name_cus'];}elseif(isset($_SESSION['member'])){ echo $dataMember['first_name_member'];} ?>"></td>
 		</tr>
 		<tr>
 			<td><b>Nama Belakang</b></td>
-			<td><input type="text" class="input" name="last_name" placeholder="Nama Belakang" value="<?php if(isset($_GET['id_cus'])){ echo $dataCus['last_name'];}elseif(isset($_SESSION['member'])){ echo $dataMember['last_name'];} ?>"></td>
+			<td><input type="text" class="input" name="last_name" placeholder="Nama Belakang" value="<?php if(isset($_GET['id_cus'])){ echo $dataCus['last_name_cus'];}elseif(isset($_SESSION['member'])){ echo $dataMember['last_name_member'];} ?>"></td>
 		</tr>
 		<tr>
 			<td class="top"><b>Alamat</b></td>
-			<td><textarea cols="25" rows="5" name="address" placeholder="Alamat"><?php if(isset($_GET['id_cus'])){ echo $dataCus['address'];}elseif(isset($_SESSION['member'])){ echo $dataMember['address'];} ?></textarea></td>
+			<td><textarea cols="25" rows="5" name="address" placeholder="Alamat"><?php if(isset($_GET['id_cus'])){ echo $dataCus['address_cus'];}elseif(isset($_SESSION['member'])){ echo $dataMember['address_member'];} ?></textarea></td>
 		</tr>
 		<tr>
 			<td><b>Nomor Telepon</b></td>
-			<td><input type="text" class="input" name="telp" placeholder="Nomor Telepon" value="<?php if(isset($_GET['id_cus'])){ echo $dataCus['telp'];}elseif(isset($_SESSION['member'])){ echo $dataMember['telp'];} ?>"></td>
+			<td><input type="text" class="input" name="telp" placeholder="Nomor Telepon" value="<?php if(isset($_GET['id_cus'])){ echo $dataCus['telp_cus'];}elseif(isset($_SESSION['member'])){ echo $dataMember['telp_member'];} ?>"></td>
 		</tr>
 		<tr>
 			<td colspan="2">&nbsp;</td>
@@ -83,9 +83,16 @@
 <script>
 	function validasi(form) {
 		if (form.email.value == ""){
-			alert("Anda belum mengisikan Alamat Email.");
+			alert("Anda belum mengisikan Email.");
 			form.email.focus();
 			return (false);
+		} else {
+			var email=document.getElementById('email').value;
+			if ((email.indexOf('@',0)==-1) || (email.indexOf('.',0)==-1)) { 
+				alert("Alamat Email anda tidak valid");  
+				form.email.focus();
+				return (false);
+			}			
 		}
 		if (form.first_name.value == ""){
 			alert("Anda belum mengisikan Nama Depan.");

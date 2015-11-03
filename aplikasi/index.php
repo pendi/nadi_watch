@@ -1,39 +1,15 @@
 <style type="text/css">
-	.padding-left {
-    padding-left: 135px;
-	}
-	.padding-right {
-    padding-right: 135px;
-	}
-
-	img.scale:hover {
-		-webkit-transform: scale(1.2,1.2);
-		-moz-transform: scale(1.2,1.2);
-		-ms-transform: scale(1.2,1.2);
-		-o-transform: scale(1.2,1.2);
-	}
-	.search-error {
-		text-align: center;
-		font-size: 30px;
-		color: #FF1919;
-		padding: 140px;
-	}
-	select[size="0"] {
-		width: inherit;
-	}
-	input[type=submit].sort {
-		line-height: 15px;
-	}
+	.padding-left { padding-left: 135px; }
+	.padding-right { padding-right: 135px; }
+	img.scale:hover { -webkit-transform: scale(1.2,1.2); -moz-transform: scale(1.2,1.2); -ms-transform: scale(1.2,1.2); -o-transform: scale(1.2,1.2); }
+	.search-error { text-align: center; font-size: 30px; color: #FF1919; padding: 140px; }
+	select[size="0"] { width: inherit; }
+	input[type=submit].sort { line-height: 15px; }
 </style>
 
 <?php
 
 	$batas = 10;
-	if(isset($_GET['search'])) {
-		$search = $_GET['search'];
-	} else { 
-		$search = "";
-	}
 
 	// $halaman = $_GET['halaman'];
 	if(isset($_GET['halaman'])) { 
@@ -41,11 +17,27 @@
 	} else { 
 		$halaman = ""; 
 	}
+
 	// $by = $_GET['by']
 	if(isset($_GET['by'])) { 
 		$by = $_GET['by']; 
 	} else { 
 		$by = ""; 
+	}
+	
+	// $search = $_GET['search']
+	if(isset($_GET['search'])) {
+		$search = $_GET['search'];
+		// $gen = "gender = 'pria' AND name LIKE '%$search%' OR status = 2 AND gender = 'wanita' AND name LIKE '%$search%' OR type LIKE '%$search%' AND gender = '$gen' AND status = 2 OR type LIKE '%$search%' AND gender = 'pria' AND status = 2";
+	} else { 
+		$search = "";
+	}
+
+	// $gen = $_GET['gen']
+	if(isset($_GET['gen'])) { 
+		$gen = $_GET['gen'];
+	} else { 
+		$gen = "";
 	}
 
 	if(empty($halaman)){ 
@@ -56,19 +48,20 @@
 	    $posisi = ($halaman-1) * $batas; 
 	}
 
-	$order = "created_time";
+	$order = "created_time_product";
 	$type = "type";
 	$pos = "desc";
 	if ($by == "az") {
-		$order = "name";
+		$order = "name_product";
 		$type = "type";
 		$pos = "asc";
 	} elseif ($by == "za") {
-		$order = "name";
+		$order = "name_product";
 		$type = "type";
 		$pos = "desc";
 	} elseif ($by == "sale") {
-		$order = "sale";
+		$order = "sale_product";
+		$pos = "desc";
 	} elseif ($by == "lower") {
 		$order = "price";
 		$pos = "asc";
@@ -77,11 +70,17 @@
 		$pos = "desc";
 	}
 
-	if (!empty($search)) {
-		$sql = mysql_query("SELECT * FROM product WHERE status = 2 AND name LIKE '%$search%' OR type LIKE '%$search%' AND status = 2 ORDER BY $order $pos,$type $pos LIMIT $posisi,$batas");
+	if (!empty($search) && !empty($gen)) {
+		$sql = mysql_query("SELECT * FROM product WHERE status_product = 2 AND gender = '$gen' AND name_product LIKE '%$search%' OR type LIKE '%$search%' AND gender = '$gen' AND status_product = 2 ORDER BY $order $pos,$type $pos LIMIT $posisi,$batas");
+		$jumlah = mysql_num_rows($sql);
+	} elseif (!empty($gen)) {
+		$sql = mysql_query("SELECT * FROM product WHERE status_product = 2 AND gender = '$gen' ORDER BY $order $pos,$type $pos LIMIT $posisi,$batas");
+		$jumlah = mysql_num_rows($sql);
+	} elseif (!empty($search)){
+		$sql = mysql_query("SELECT * FROM product WHERE status_product = 2 AND name_product LIKE '%$search%' OR type LIKE '%$search%' AND status_product = 2 ORDER BY $order $pos,$type $pos LIMIT $posisi,$batas");
 		$jumlah = mysql_num_rows($sql);
 	} else {
-		$sql = mysql_query("SELECT * FROM product WHERE status = 2 ORDER BY $order $pos,$type $pos LIMIT $posisi,$batas");
+		$sql = mysql_query("SELECT * FROM product WHERE status_product = 2 ORDER BY $order $pos,$type $pos LIMIT $posisi,$batas");
 		$jumlah = mysql_num_rows($sql);
 	}
 ?>
@@ -94,11 +93,18 @@
 					<hr/>
 					Sort By: &nbsp;&nbsp;
 					<select size="0" name="by">
+						<option value="">-- Pilih --</option>
 						<option value="sale" <?php if($by=="sale"){echo "selected";} ?>>Penjualan</option>
 						<option value="az" <?php if($by=="az"){echo "selected";} ?>>A-Z</option>
 						<option value="za" <?php if($by=="za"){echo "selected";} ?>>Z-A</option>
 						<option value="lower" <?php if($by=="lower"){echo "selected";} ?>>Harga Terendah</option>
 						<option value="higher" <?php if($by=="higher"){echo "selected";} ?>>Harga Tertinggi</option>
+					</select> &nbsp;&nbsp;&nbsp;
+					Pemakai: &nbsp;&nbsp;
+					<select size="0" name="gen">
+						<option value="">-- Pilih --</option>
+						<option value="pria" <?php if($gen=="pria"){echo "selected";} ?>>Pria</option>
+						<option value="wanita" <?php if($gen=="wanita"){echo "selected";} ?>>Wanita</option>
 					</select>&nbsp;
 					<?php if(!empty($search)): ?>
 						<input type="hidden" name="search" value="<?php echo $search; ?>">
@@ -106,25 +112,24 @@
 					<?php else: ?>
 						<input type="hidden" name="list" value="1">
 					<?php endif ?>
-					<input type="submit" class="button round sort" value="Sort">
+					<input type="submit" class="button round sort" value="Pilih">
 					<hr/>
 				</form>
 			</td>
 		</tr>
-		
 		<?php while ($r=mysql_fetch_array($sql)) {
 		$price = $r["price"];
 		$stock = $r['stock']; ?>
 			
 		<tr>
 			<td class="padding-left" colspan="3">			
-				<p><a href="index.php?list=24&id_product=<?php echo $r[0] ?>" class="href ref"><?php echo $r["name"]; ?>&nbsp;<?php echo $r['type']; ?></a></p>
+				<p><a href="index.php?list=24&id_product=<?php echo $r[0] ?>" class="href ref"><?php echo $r["name_product"]; ?>&nbsp;<?php echo $r['type'].' - '.$r['color']; ?></a></p>
 			</td>
 		</tr>
 		<tr>
 			<td class="padding-left" width="128px">
-				<?php if (!empty($r['image'])): ?>				
-					<a href="index.php?list=24&id_product=<?php echo $r[0] ?>"><img class="scale" src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/'.$r['image']; ?>" width="120px" height="120px"></a>
+				<?php if (!empty($r['image_product'])): ?>				
+					<a href="index.php?list=24&id_product=<?php echo $r[0] ?>"><img class="scale" src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/'.$r['image_product']; ?>" width="120px" height="120px"></a>
 				<?php else : ?>
 					<a href="index.php?list=24&id_product=<?php echo $r[0] ?>"><img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/product/no-image.jpg' ?>" width="120px" height="120px"></a>
 				<?php endif ?>
@@ -159,10 +164,14 @@
 				<nav>
 					<ul class="pagination">
 						<?php
-							if(!empty($search)) {
-								$tampil2 = "SELECT * FROM product WHERE status = 2 AND name LIKE '%$search%' OR type LIKE '%$search%' AND status = 2";
+							if (!empty($search) && !empty($gen)) {
+								$tampil2 = "SELECT * FROM product WHERE status_product = 2 AND gender = '$gen' AND name_product LIKE '%$search%' OR type LIKE '%$search%' AND gender = '$gen' AND status_product = 2";
+							}elseif (!empty($gen)) {
+								$tampil2 = "SELECT * FROM product WHERE status_product = 2 AND gender = '$gen'";
+							} elseif(!empty($search)) {
+								$tampil2 = "SELECT * FROM product WHERE status_product = 2 AND name_product LIKE '%$search%' OR type LIKE '%$search%' AND status_product = 2";
 							} else {
-								$tampil2 = "SELECT * FROM product WHERE status = 2";
+								$tampil2 = "SELECT * FROM product WHERE status_product = 2";
 							}
 							$hasil2=mysql_query($tampil2); 
 							$jmldata=mysql_num_rows($hasil2); 
@@ -171,23 +180,15 @@
 
 						<?php if($halaman > 1): ?>
 							<?php $previous = $halaman-1; ?>
-							<?php if(!empty($search)): ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=1&search=$search&halaman=$previous&by=$by" ?>" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
-							<?php else: ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=1&halaman=$previous&by=$by" ?>" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
-							<?php endif ?>
+							<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=1&halaman=$previous&by=$by&search=$search&gen=$gen" ?>" aria-label="Previous"><span aria-hidden="true">&lsaquo;&lsaquo;</span></a></li>
 						<?php else: ?>
-							<li class="disabled"><a href="" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+							<li class="disabled"><a href="" aria-label="Previous"><span aria-hidden="true">&lsaquo;&lsaquo;</span></a></li>
 						<?php endif ?>
 
 						<?php for($i=1;$i<=$jmlhalaman;$i++): ?>
 							<?php if($i>=($halaman-3) && $i <= ($halaman+3)): ?>
 								<?php if ($i != $halaman): ?>
-									<?php if(!empty($search)): ?>
-										<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=1&search=$search&halaman=$i&by=$by" ?>"><?php echo $i; ?></a></li>
-									<?php else: ?>
-										<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=1&halaman=$i&by=$by" ?>"><?php echo $i; ?></a></li>
-									<?php endif ?>
+									<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=1&search=$search&halaman=$i&by=$by&gen=$gen" ?>"><?php echo $i; ?></a></li>
 								<?php else: ?>
 									<li class="active"><a><?php echo $i; ?></a></li>
 								<?php endif ?>
@@ -196,13 +197,9 @@
 
 						<?php if($halaman < $jmlhalaman): ?>
 							<?php $next = $halaman+1; ?>
-							<?php if(!empty($search)): ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=1&search=$search&halaman=$next&by=$by" ?>" aria-label="Next"><span aria-hidden="true">»</span></a></li>
-							<?php else: ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=1&halaman=$next&by=$by" ?>" aria-label="Next"><span aria-hidden="true">»</span></a></li>
-							<?php endif ?>
+							<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=1&search=$search&halaman=$next&by=$by&gen=$gen" ?>" aria-label="Next"><span aria-hidden="true">&rsaquo;&rsaquo;</span></a></li>
 						<?php else: ?>
-							<li class="disabled"><a href="" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+							<li class="disabled"><a href="" aria-label="Next"><span aria-hidden="true">&rsaquo;&rsaquo;</span></a></li>
 						<?php endif ?>
 					</ul>
 			   	</nav>
@@ -212,7 +209,7 @@
 <?php else: ?>
 	<table class="width">
 		<tr>
-			<td class="search-error">Maaf, <span style="font-weight:bold"><?php echo $search; ?></span> tidak ditemukan.</td>
+			<td class="search-error">Maaf, produk tidak tersedia.</td>
 		</tr>
 	</table>
 <?php endif ?>

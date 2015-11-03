@@ -1,13 +1,13 @@
 <?php
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} elseif ($_SESSION['user']['level'] == "admin") {
 		echo "<script>window.alert('Maaf Anda Tidak Memiliki Hak Akses');</script>";
 		echo "<script>window.location = 'index.php?list=8&head=admin';</script>";
 	} else {
 
-	$que = mysql_query("SELECT * FROM user WHERE id='$_GET[id]'");
+	$que = mysql_query("SELECT * FROM admin WHERE id_admin='$_GET[id]'");
 	$data = mysql_fetch_array($que);
 ?>
 <form action="process/delete_admin.php" method="post">
@@ -19,12 +19,12 @@
 		<tr>
 			<td width="27%"></td>
 			<td width="10%">Email &nbsp;</td>
-			<td width="35%">: <?php echo $data['email']; ?></td>
+			<td width="35%">: <?php echo $data['email_admin']; ?></td>
 		</tr>
 		<tr>
 			<td></td>
 			<td>Nama Lengkap &nbsp;</td>
-			<td>: <?php echo $data['first_name']; ?> <?php echo $data['last_name']; ?></td>
+			<td>: <?php echo $data['first_name_admin']; ?> <?php echo $data['last_name_admin']; ?></td>
 		</tr>
 		<tr>
 			<td></td>

@@ -34,18 +34,21 @@
 		<?php
 			$no = 1;
 			$total = 0;
+			$weight = 0;
 		?>
         <?php while ($data = mysql_fetch_array($query)): ?>
 			<tr class="hover">
 
 				<input type="hidden" name="id[]" value="<?php echo $data['id_product']; ?>" />
 				<td align="center"><?php echo $no; ?></td>
-				<td style="padding-left:5px;"><?php echo $data['name']; ?>&nbsp;<?php echo $data['type']; ?></td>
+				<td style="padding-left:5px;"><?php echo $data['name_product']; ?>&nbsp;<?php echo $data['type'].' - '.$data['color'] ?></td>
 				<td>Rp. <input readonly type="text" class="input" style="width:135px;" value="<?php echo price($data['price']); ?>"></td>
 				
 				<?php  
 					$sub_total = $data['price'] * $data['quantity'];
 			        $total += $sub_total; 
+			        $sub_weight = $data['weight_product'] * $data['quantity'];
+			        $weight += $sub_weight;
 				?>
 
 				<td align="center">
@@ -73,6 +76,7 @@
 			$no++;
 			endwhile
 		?>
+		<input name="weight" type="hidden" value="<?php echo $weight; ?>">
 		<tr>
 			<td align="right" colspan="4"><b style="margin-right: 3px;">Total Belanja</b></td>
 			<td><b>Rp.</b> <input style="font-weight: bold; width:130px; text-align:right" name="total" type="text" class="input" readonly value="<?php echo price($total); ?>"></td>

@@ -11,7 +11,7 @@ $idt = $_SESSION['transaksi'];
 $email = trim($_POST['email']);
 $password = md5(trim($_POST['password']));
 
-$query	= "SELECT * FROM member WHERE email='$email' AND password='$password'";
+$query	= "SELECT * FROM member WHERE email_member='$email' AND password='$password'";
 $sql	= mysql_query($query);
 $numrow	= mysql_num_rows($sql);
 $data = mysql_fetch_array($sql);

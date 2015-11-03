@@ -1,0 +1,23 @@
+RewriteEngine on
+
+RewriteRule ^beranda.seto$ katalog_beranda.php?module=beranda [L]
+RewriteRule ^profil-kami$ katalog_beranda.php?module=profil&id=$1 [L]
+RewriteRule ^cara-pembelian$ katalog_beranda.php?module=carabeli&id=$1 [L]
+RewriteRule ^peta-situs$ katalog_beranda.php?module=sitemap&id=$1 [L]
+RewriteRule ^prod-detail-(.*)$ katalog_beranda.php?module=detailproduk&id=$1 [L]
+RewriteRule ^keranjang(.*)$ katalog_beranda.php?module=keranjang&id=$1 [L]
+RewriteRule ^selesai-(.*)$ katalog_beranda.php?module=selesaibelanja&id=$1 [L]
+RewriteRule ^kategori-(.*)$ katalog_beranda.php?module=detailkategori&id=$1 [L]
+RewriteRule ^kategori-page-([0-9]+)-(.*)$ katalog_beranda.php?module=detailkategori&id=$1&halkategori=$2 [L]
+RewriteRule ^vendor-(.*)$ katalog_beranda.php?module=detailvendor&id=$1 [L]
+RewriteRule ^vendor-page-([0-9]+)-(.*)$ katalog_beranda.php?module=detailvendor&id=$1&halvendor=$2 [L]
+RewriteRule ^search?$ katalog_beranda.php?module=search [L]
+RewriteRule ^search-page-([0-9]+)-(.*)$ katalog_beranda.php?module=detailvendor&id=$1&halvendor=$2 [L]
+RewriteRule ^simpan-transaksi\.end$ katalog_beranda.php?module=simpantransaksi&id=$1 [L]
+RewriteRule ^kontak-kami$ katalog_beranda.php?module=kontak&id=$1 [L]
+RewriteRule ^kontak-aksi$ katalog_beranda.php?module=kontakaksi&id=$1 [L]
+RewriteRule ^all-items\.list$ katalog_beranda.php?module=semuaproduk&id=$1 [L]
+RewriteRule ^all-items\.list-(.*)$ katalog_beranda.php?module=semuaproduk&halproduk=$1 [L]
+
+
+Options All -Indexes

@@ -1,7 +1,7 @@
 <?php
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} else {
 ?>
 
@@ -65,10 +65,10 @@
 			// $que = "SELECT * FROM user LIMIT $posisi,$batas";
 			// $tampil = mysql_query($que);
 			if (!empty($search)) {
-				$que = mysql_query("SELECT * FROM vendor WHERE name LIKE '%$search%' ORDER BY name ASC LIMIT $posisi,$batas");
+				$que = mysql_query("SELECT * FROM vendor WHERE name_vendor LIKE '%$search%' ORDER BY name_vendor ASC LIMIT $posisi,$batas");
 				$jumlah = mysql_num_rows($que);
 			} else {
-				$que = mysql_query("SELECT * FROM vendor ORDER BY name ASC LIMIT $posisi,$batas");
+				$que = mysql_query("SELECT * FROM vendor ORDER BY name_vendor ASC LIMIT $posisi,$batas");
 				$jumlah = mysql_num_rows($que);
 			}
 		?>
@@ -76,11 +76,11 @@
 		<?php if ($jumlah > 0): ?>
 			<?php while ($data = mysql_fetch_array($que)): ?>					
 				<tr class="hover">
-					<td align='center'><?php echo ucwords($data['name']); ?></td>
-					<td align='center'><?php echo $data['sale']; ?> Unit</td>
+					<td align='center'><?php echo ucwords($data['name_vendor']); ?></td>
+					<td align='center'><?php echo $data['sale_vendor']; ?> Unit</td>
 					<td align='center'>
-						<a href="index.php?id=<?php echo $data['id']; ?>&list=27&head=admin"><img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/icon/edit.png' ?>" class="width"></a> &nbsp;
-						<a href="index.php?id=<?php echo $data['id']; ?>&list=28&head=admin"><img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/icon/delete.png' ?>" class="width"></a>
+						<a href="index.php?id=<?php echo $data['id_vendor']; ?>&list=27&head=admin"><img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/icon/edit.png' ?>" class="width"></a> &nbsp;
+						<a href="index.php?id=<?php echo $data['id_vendor']; ?>&list=28&head=admin"><img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/icon/delete.png' ?>" class="width"></a>
 					</td>
 				</tr>				 
 			<?php endwhile ?>
@@ -97,7 +97,7 @@
 					<ul class="pagination">
 						<?php
 							if (!empty($search)) {
-								$tampil2 = "SELECT * FROM vendor WHERE name LIKE '%$search%'";
+								$tampil2 = "SELECT * FROM vendor WHERE name_vendor LIKE '%$search%'";
 							} else {
 								$tampil2 = "SELECT * FROM vendor";
 							}
@@ -109,12 +109,12 @@
 						<?php if($halaman > 1): ?>
 							<?php $previous = $halaman-1; ?>
 							<?php if(!empty($search)): ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?search=$search&halaman=$previous" ?>&list=25&head=admin" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+								<li><a href="<?php echo "$_SERVER[PHP_SELF]?search=$search&halaman=$previous" ?>&list=25&head=admin" aria-label="Previous"><span aria-hidden="true">&lsaquo;&lsaquo;</span></a></li>
 							<?php else: ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?halaman=$previous" ?>&list=25&head=admin" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+								<li><a href="<?php echo "$_SERVER[PHP_SELF]?halaman=$previous" ?>&list=25&head=admin" aria-label="Previous"><span aria-hidden="true">&lsaquo;&lsaquo;</span></a></li>
 							<?php endif ?>
 						<?php else: ?>
-							<li class="disabled"><a href="" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+							<li class="disabled"><a href="" aria-label="Previous"><span aria-hidden="true">&lsaquo;&lsaquo;</span></a></li>
 						<?php endif ?>
 
 						<?php for($i=1;$i<=$jmlhalaman;$i++): ?>
@@ -134,12 +134,12 @@
 						<?php if($halaman < $jmlhalaman): ?>
 							<?php $next = $halaman+1; ?>
 							<?php if(!empty($search)): ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?search=$search&halaman=$next" ?>&list=25&head=admin" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+								<li><a href="<?php echo "$_SERVER[PHP_SELF]?search=$search&halaman=$next" ?>&list=25&head=admin" aria-label="Next"><span aria-hidden="true">&rsaquo;&rsaquo;</span></a></li>
 							<?php else: ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?halaman=$next" ?>&list=25&head=admin" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+								<li><a href="<?php echo "$_SERVER[PHP_SELF]?halaman=$next" ?>&list=25&head=admin" aria-label="Next"><span aria-hidden="true">&rsaquo;&rsaquo;</span></a></li>
 							<?php endif ?>
 						<?php else: ?>
-							<li class="disabled"><a href="" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+							<li class="disabled"><a href="" aria-label="Next"><span aria-hidden="true">&rsaquo;&rsaquo;</span></a></li>
 						<?php endif ?>
 					</ul>
 			   	</nav>

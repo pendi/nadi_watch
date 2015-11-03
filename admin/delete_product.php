@@ -1,13 +1,13 @@
 <?php
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} else {
 	
 	$que = mysql_query("SELECT * FROM product WHERE id_product='$_GET[id_product]'");
 	$data = mysql_fetch_array($que);
 
-	$sql = mysql_query("SELECT name FROM vendor WHERE id='$data[vendor_id]'");
+	$sql = mysql_query("SELECT name_vendor FROM vendor WHERE id_vendor='$data[id_vendor]'");
 	$result = mysql_fetch_array($sql);
 ?>
 <style type="text/css">
@@ -32,13 +32,13 @@
 				<td></td>
 				<td>Vendor &nbsp;</td>
 				<td>:</td>
-				<td><?php echo ucwords($result['name']); ?></td>
+				<td><?php echo ucwords($result['name_vendor']); ?></td>
 			</tr>
 			<tr>
 				<td></td>
 				<td>Nama &nbsp;</td>
 				<td>:</td>
-				<td><?php echo $data['name']; ?></td>
+				<td><?php echo $data['name_product']; ?></td>
 			</tr>
 			<tr>
 				<td></td>
@@ -72,6 +72,12 @@
 			</tr>
 			<tr>
 				<td></td>
+				<td>Berat &nbsp;</td>
+				<td>:</td>
+				<td><?php echo $data['weight_product']; ?></td>
+			</tr>
+			<tr>
+				<td></td>
 				<td>Pemakai &nbsp;</td>
 				<td>:</td>
 				<td><?php echo ucwords($data['gender']); ?></td>
@@ -87,8 +93,8 @@
 				<td>Gambar</td>
 				<td></td>
 				<td>
-					<?php if (!empty($data['image'])): ?>				
-						<img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/'.$data['image']; ?>" width="150px"><br/>
+					<?php if (!empty($data['image_product'])): ?>				
+						<img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/'.$data['image_product']; ?>" width="150px"><br/>
 					<?php else : ?>
 						<img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/product/no-image.jpg' ?>" width="150px"><br/>
 					<?php endif ?>

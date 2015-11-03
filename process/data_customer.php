@@ -25,24 +25,24 @@
 	if (empty($id_cus)) {
 		$update = mysql_query("UPDATE orders SET id_cus='$nextNoCus' WHERE id_order='$id_order'");
 		if ($update) {
-			$query = "INSERT INTO customer(id_cus,email,first_name,last_name,address,telp,created_time)
+			$query = "INSERT INTO customer(id_cus,email_cus,first_name_cus,last_name_cus,address_cus,telp_cus,created_time_cus)
 						VALUES('$nextNoCus','$email','$first_name','$last_name','$address','$telp','$time')";
 			$hasil = mysql_query($query);
 			if ($hasil) {
-				echo "<script>window.location = '../index.php?list=23&id_cus=$nextNoCus&id_order=$id_order';</script>";
+				echo "<script>window.location = '../index.php?list=36&id_cus=$nextNoCus&id_order=$id_order';</script>";
 			}
 		}
 	} else {
-		$selectMember = mysql_query("SELECT * FROM member WHERE id = '$id_cus'");
+		$selectMember = mysql_query("SELECT * FROM member WHERE id_member = '$id_cus'");
 		$memberRow = mysql_num_rows($selectMember);
 		if ($memberRow > 0) {
 			$update = mysql_query("UPDATE orders SET id_cus='$nextNoCus',id_member='$id_cus' WHERE id_order='$id_order'");
-			$updateCus = mysql_query("INSERT INTO customer(id_cus,email,first_name,last_name,address,telp,created_time)
+			$updateCus = mysql_query("INSERT INTO customer(id_cus,email_cus,first_name_cus,last_name_cus,address_cus,telp_cus,created_time_cus)
 						VALUES('$nextNoCus','$email','$first_name','$last_name','$address','$telp','$time')");
-			echo "<script>window.location = '../index.php?list=23&id_cus=$nextNoCus&id_order=$id_order';</script>";
+			echo "<script>window.location = '../index.php?list=36&id_cus=$nextNoCus&id_order=$id_order';</script>";
 		} else {
-			$updateCus = mysql_query("UPDATE customer SET email='$email', first_name='$first_name', last_name='$last_name', address='$address', telp='$telp' WHERE id_cus='$id_cus'");
-			echo "<script>window.location = '../index.php?list=23&id_cus=$id_cus&id_order=$id_order';</script>";
+			$updateCus = mysql_query("UPDATE customer SET email_cus='$email', first_name_cus='$first_name', last_name_cus='$last_name', address_cus='$address', telp_cus='$telp' WHERE id_cus='$id_cus'");
+			echo "<script>window.location = '../index.php?list=36&id_cus=$id_cus&id_order=$id_order';</script>";
 		}
 	}
 ?>

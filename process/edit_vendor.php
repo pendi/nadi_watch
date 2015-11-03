@@ -3,7 +3,7 @@ include "../koneksi.php";
 $id = $_POST['id'];
 $name = $_POST['name'];
 
-$query = "UPDATE vendor SET name='$name' WHERE id='$id'";
+$query = "UPDATE vendor SET name_vendor='$name' WHERE id_vendor='$id'";
 $hasil = mysql_query($query);
 
 if ($hasil) {

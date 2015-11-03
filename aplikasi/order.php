@@ -37,7 +37,7 @@
 	}
 
 	if(isset($_SESSION['member'])) {
-		$id_member = $_SESSION['member']['id'];
+		$id_member = $_SESSION['member']['id_member'];
 	} else {
 		$id_member = '';
 	}
@@ -49,89 +49,115 @@
 		$selectOrd = mysql_query("SELECT * FROM orders WHERE id_member='$id_member' ORDER BY id_order DESC");
 		$jumlah = mysql_num_rows($selectOrd);
 	}
+
 ?>
 <?php if($jumlah > 0): ?>
-<?php if(isset($_SESSION['member']) || !empty($search)): ?>
-	<?php while($resultOrd = mysql_fetch_array($selectOrd)): ?>
-		<?php if(!empty($resultOrd['invoice']) && $resultOrd['status'] != 3): ?>
-			<table width="95%" align="center" class="border textKA" border="1" style="margin-bottom:15px;">
-				<tr class="listLine">
-					<td colspan="5" class="left"><?php echo $resultOrd['id_order']; ?></td>
-				</tr>
-				<tr>
-					<td width="90px"><img src="image/icon/shopping-icon.png" width="90px"></td>
-					<td colspan="3" width="500px" valign="top" style="line-height:25px;" class="left">
-						<?php echo $resultOrd['invoice']; ?><br /><span class="tgl"><?php echo date("d F Y", strtotime($resultOrd['created_time'])); ?></span>
-					</td>
-					<td valign="bottom" align="right" class="show">
-						<span class="show-area">Lihat Pesanan</span>
-					</td>
-					<td valign="bottom" align="right" class="hide">
-						<span class="hide-area">Tutup Pesanan</span>
-					</td>
-				</tr>
-
-				<tr class="listLine text-area" bgcolor="#75D1FF">
-					<th></th>
-					<th>Produk</th>
-					<th>Harga</th>
-					<th>Jml</th>
-					<th>Sub Total</th>
-				</tr>
-
-				<?php 
-					$no = 1;
-					$total = 0;
-					$grandTotal = 0;
-					$discount = 0;
-					$queryTrs = mysql_query("SELECT * FROM transaksi WHERE id_order='$resultOrd[id_order]'");
-					while($dataTrs = mysql_fetch_array($queryTrs)){
-						$queryPro = mysql_query("SELECT * FROM product WHERE id_product='$dataTrs[id_product]'");
-						$dataPro = mysql_fetch_array($queryPro);
-						$sub_total = $dataPro['price'] * $dataTrs['quantity'];
-						if (!empty($resultOrd['id_member'])) {
-							$grandTotal += $sub_total;
-							$discount = (($grandTotal*10)/100);
-							// var_dump($discount);
-							$total = $grandTotal - $discount;
-						} else {
-							$total += $sub_total;
-						}
-				?>
-				<tr class="listLine text-area">
-					<td align="center"><?php echo $no; ?></td>
-					<td class="left"><?php echo $dataPro['name']; ?> <?php echo $dataPro['type'] ?></td>
-					<td class="left">Rp. <?php echo price($dataPro['price']); ?></td>
-					<td align="center"><?php echo $dataTrs['quantity']; ?></td>
-					<td class="left">Rp. <span class="price"><?php echo price($sub_total); ?></span></td>
-				</tr>
-				<?php
-					$no++;
-				 	} 
-				?>
-				<?php if(!empty($resultOrd['id_member'])): ?>
-					<tr class="listLine text-area">
-						<td colspan="4" align="right"><b style="margin-right: 3px;">Sub Total</b></td>
-						<td class="left"><b>Rp. <span class="price"><?php echo price($grandTotal); ?></b></td>
+	<?php if(isset($_SESSION['member']) || !empty($search)): ?>
+		<?php while($resultOrd = mysql_fetch_array($selectOrd)): ?>
+			<?php 
+				$selectFare = mysql_query("SELECT tarif FROM tarif WHERE id_tarif='$resultOrd[id_tarif]'");
+				$dataFare = mysql_fetch_array($selectFare);
+			?>
+			<?php $invoice = $resultOrd['invoice']; ?>
+			<?php if(!empty($invoice) && $resultOrd['status_order'] <= 4): ?>
+				<table width="95%" align="center" class="border textKA" border="1" style="margin-bottom:15px;">
+					<tr class="listLine">
+						<td colspan="5" class="left"><?php echo $resultOrd['id_order']; ?></td>
 					</tr>
-					<tr class="listLine text-area">
-						<td colspan="4" align="right"><span style="margin-right: 3px;">Diskon Member</span></td>
-						<td class="left">Rp. <span class="price"><?php echo price($discount); ?></td>
-					</tr>
-				<?php endif ?>
+					<tr>
+						<td width="90px"><img src="image/icon/shopping-icon.png" width="90px"></td>
+						<td colspan="3" width="500px" valign="top" style="line-height:25px;" class="left">
+							<?php echo $invoice; ?><br />
+							<span class="tgl"><?php echo date("d F Y", strtotime($resultOrd['created_time_order'])); ?></span><br />
 
-				<tr class="listLine text-area">
-					<td colspan="4" class="right"><b>Total Belanja</b></td>
-					<td class="left"><b>Rp. <span class="price"><?php echo price($total); ?></span></b></td>
-				</tr>
-			</table>
-		<?php endif ?>
-	<?php endwhile ?>
-<?php endif ?>
+							<?php if ($resultOrd['status_order'] == 1): ?>
+								<a id="<?php echo $invoice ?>" class="href open-modal" style="cursor:pointer">Konfirmasi</a>
+								|| <a href="<?php echo "process/delete_order.php?id_order=$resultOrd[id_order]" ?>" onclick="return confirm('Apakah anda yakin akan menghapus data ini?')" class="popup-link href">Hapus Transaksi</a>
+							<?php elseif ($resultOrd['status_order'] == 2): ?>
+								<a href="#" class="href">Menunggu Konfirmasi</a>							
+							<?php elseif ($resultOrd['status_order'] == 3): ?>
+								<a href="#" class="href">Barang Dalam Proses Pengiriman</a>
+								|| <a href="<?php echo "process/delete_order.php?id_order=$resultOrd[id_order]&act=lunas" ?>" onclick="return confirm('Apakah anda yakin barang sudah diterima?')" class="popup-link href">Sudah Diterima</a>
+							<?php elseif ($resultOrd['status_order'] == 4): ?>
+								<a href="#" class="href">Barang Anda Sudah Diterima</a>
+							<?php endif ?>
+								<div class="mikes-modal" id="myModal"></div>
+						</td>
+						<td valign="bottom" align="right" class="show">
+							<span class="show-area">Lihat Pesanan</span>
+						</td>
+						<td valign="bottom" align="right" class="hide">
+							<span class="hide-area">Tutup Pesanan</span>
+						</td>
+					</tr>
+
+					<tr class="listLine text-area" bgcolor="#75D1FF">
+						<th></th>
+						<th>Produk</th>
+						<th>Harga</th>
+						<th>Jml</th>
+						<th>Sub Total</th>
+					</tr>
+
+					<?php 
+						$no = 1;
+						$total = 0;
+						$grandTotal = 0;
+						$discount = 0;
+						$ongkir = ceil($resultOrd['weight_order'])*$dataFare['tarif'];
+						$queryTrs = mysql_query("SELECT * FROM transaksi WHERE id_order='$resultOrd[id_order]'");
+						while($dataTrs = mysql_fetch_array($queryTrs)){
+							$queryPro = mysql_query("SELECT * FROM product WHERE id_product='$dataTrs[id_product]'");
+							$dataPro = mysql_fetch_array($queryPro);
+							$sub_total = $dataPro['price'] * $dataTrs['quantity_trans'];
+							if (!empty($resultOrd['id_member'])) {
+								$grandTotal += $sub_total;
+								$grandTotals = $grandTotal + $ongkir;
+								$discount = (($grandTotals*10)/100);
+								$totals = $grandTotals - $discount;
+							} else {
+								$total += $sub_total;
+								$totals = $total + $ongkir;
+							}
+					?>
+					<tr class="listLine text-area">
+						<td align="center"><?php echo $no; ?></td>
+						<td class="left"><?php echo $dataPro['name_product']; ?> <?php echo $dataPro['type'].' - '.$dataPro['color'] ?></td>
+						<td class="left">Rp. <?php echo price($dataPro['price']); ?></td>
+						<td align="center"><?php echo $dataTrs['quantity_trans']; ?></td>
+						<td class="left">Rp. <span class="price"><?php echo price($sub_total); ?></span></td>
+					</tr>
+					<?php
+						$no++;
+					 	} 
+					?>
+					<tr class="listLine text-area">
+						<td colspan="4" align="right"><span style="margin-right: 3px;">Ongkos Kirim</span></td>
+						<td class="left">Rp. <span class="price"><?php echo price($ongkir); ?></span></td>
+					</tr>
+					<?php if(!empty($resultOrd['id_member'])): ?>
+						<tr class="listLine text-area">
+							<td colspan="4" align="right"><b style="margin-right: 3px;">Sub Total</b></td>
+							<td class="left"><b>Rp. <span class="price"><?php echo price($grandTotals); ?></b></td>
+						</tr>
+						<tr class="listLine text-area">
+							<td colspan="4" align="right"><span style="margin-right: 3px;">Diskon Member</span></td>
+							<td class="left">Rp. <span class="price"><?php echo price($discount); ?></td>
+						</tr>
+					<?php endif ?>
+
+					<tr class="listLine text-area">
+						<td colspan="4" class="right"><b>Total Belanja</b></td>
+						<td class="left"><b>Rp. <span class="price"><?php echo price($totals); ?></span></b></td>
+					</tr>
+				</table>
+			<?php endif ?>
+		<?php endwhile ?>
+	<?php endif ?>
 <?php else: ?>
 	<table class="width">
 		<tr>
-			<td align="center">sasasas</td>
+			<td align="center">Maaf, Kode Transaksi tidak ditemukan</td>
 		</tr>
 	</table>
 <?php endif ?>
@@ -155,5 +181,17 @@
 	    	$parentHide.find('.show').show();
 	    	$parentHide.find('.hide').hide();
 	    });
+
+	    $(".open-modal").click(function(e) {
+            var x = $(this).attr("id");
+            $.ajax({
+                url: "aplikasi/confirm.php",
+                type: "GET",
+                data : { invoice: x,},
+                success: function (ajaxData){
+                    $("#myModal").html(ajaxData);
+                }
+            });
+        });
 	});
 </script>

@@ -1,7 +1,7 @@
 <?php
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} elseif ($_SESSION['user']['level'] == "admin") {
 		echo "<script>window.alert('Maaf, Anda Tidak Memiliki Hak Akses');</script>";
 		echo "<script>window.location = 'index.php?list=8&head=admin';</script>";

@@ -9,7 +9,7 @@
 	$telp = trim($_POST['telp']);
 	$password = md5(trim($_POST['password']));
 
-	$updateMember = mysql_query("UPDATE member SET email='$email',first_name='$first_name',last_name='$last_name',address='$address',telp='$telp',password='$password' WHERE id='$id'");
+	$updateMember = mysql_query("UPDATE member SET email_member='$email',first_name_member='$first_name',last_name_member='$last_name',address_member='$address',telp_member='$telp',password='$password' WHERE id_member='$id'");
 
 	echo "<script>window.location = '../index.php?list=1';</script>";
 ?>

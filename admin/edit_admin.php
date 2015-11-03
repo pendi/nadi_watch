@@ -1,15 +1,15 @@
 <?php
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} else {
 
-		$id = $_SESSION['user']['id'];
-		$query = mysql_query("SELECT * FROM user WHERE id='$id'");
+		$id = $_SESSION['user']['id_admin'];
+		$query = mysql_query("SELECT * FROM admin WHERE id_admin='$id'");
 		$result = mysql_fetch_array($query);
 ?>
 <form method="post" action="process/edit_admin.php" onsubmit="return validasi(this)">
-	<input type="hidden" name="id" value="<?php echo $result['id']; ?>">
+	<input type="hidden" name="id" value="<?php echo $result['id_admin']; ?>">
 	<table class="width">
 		<tr>
 			<td align="center"><h2>PROFIL</h2></td>
@@ -19,19 +19,19 @@
 		<tr>
 			<td width="135px"><b>Email</b></td>
 			<td colspan="2">
-				<input class="input" type="text" name="email" placeholder="Email" value="<?php echo $result['email']; ?>">
+				<input class="input" type="text" name="email" placeholder="Email" value="<?php echo $result['email_admin']; ?>">
 			</td>
 		</tr>
 		<tr>
 			<td><b>Nama Depan</b></td>
 			<td colspan="2">
-				<input class="input" type="text" name="first_name" placeholder="Nama Depan" value="<?php echo $result['first_name']; ?>">
+				<input class="input" type="text" name="first_name" placeholder="Nama Depan" value="<?php echo $result['first_name_admin']; ?>">
 			</td>
 		</tr>
 		<tr>
 			<td><b>Nama Belakang</b></td>
 			<td colspan="2">
-				<input class="input" type="text" name="last_name" placeholder="Nama Belakang" value="<?php echo $result['last_name']; ?>">
+				<input class="input" type="text" name="last_name" placeholder="Nama Belakang" value="<?php echo $result['last_name_admin']; ?>">
 			</td>
 		</tr>
 		<tr>

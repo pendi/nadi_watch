@@ -1,14 +1,14 @@
 <?php
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} else {
 
-	$query = mysql_query("SELECT * FROM vendor WHERE id = '$_GET[id]'");
+	$query = mysql_query("SELECT * FROM vendor WHERE id_vendor = '$_GET[id]'");
 	$data = mysql_fetch_array($query);
 ?>
 <form action="process/edit_vendor.php" method="post" onsubmit="return validasi(this)">
-	<input type="hidden" name="id" value="<?php echo $data['id']; ?>" />
+	<input type="hidden" name="id" value="<?php echo $data['id_vendor']; ?>" />
 	<table class="width">
 		<tr>
 			<td colspan="3" align="center"><h2>EDIT VENDOR</h2></td>
@@ -18,7 +18,7 @@
 			<td width="20%"></td>
 			<td width="5%">Nama &nbsp;</td>
 			<td width="33%">
-				<input type="text" class="input" name="name" placeholder="Nama" value="<?php echo $data['name']; ?>">
+				<input type="text" class="input" name="name" placeholder="Nama" value="<?php echo $data['name_vendor']; ?>">
 			</td>
 		</tr>
 		<tr>

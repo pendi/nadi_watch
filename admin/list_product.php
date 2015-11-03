@@ -1,7 +1,7 @@
 <?php
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} else {
 		$batas   = 7;
 		if(isset($_GET['search'])) {
@@ -25,10 +25,10 @@
 		}
 
 		if (!empty($search)) {
-			$que = mysql_query("SELECT id_product,name,type,price,stock,image,status,gender,category,description,color FROM product WHERE name LIKE '%$search%' OR type LIKE '%$search%' LIMIT $posisi,$batas");
+			$que = mysql_query("SELECT * FROM product WHERE name_product LIKE '%$search%' OR type LIKE '%$search%' ORDER BY created_time_product DESC LIMIT $posisi,$batas");
 			$jumlah = mysql_num_rows($que);
 		} else {
-			$que = mysql_query("SELECT id_product,name,type,price,stock,image,status,gender,category,description,color FROM product LIMIT $posisi,$batas");
+			$que = mysql_query("SELECT * FROM product ORDER BY created_time_product DESC LIMIT $posisi,$batas");
 			$jumlah = mysql_num_rows($que);
 		}
 ?>
@@ -60,20 +60,20 @@
 			<table width="95%" align="center" class="listPro" style="border-bottom: 1px solid rgb(165, 165, 165);">
 				<tr>
 					<td width="85px">
-						<?php if(!empty($data['image'])): ?>
-							<img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/'.$data['image']; ?>" width="80px">
+						<?php if(!empty($data['image_product'])): ?>
+							<img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/'.$data['image_product']; ?>" width="80px">
 						<?php else: ?>
 							<img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/product/no-image.jpg' ?>" width="80px">
 						<?php endif ?>
 					</td>
 					<td width="540px" style="line-height:26px" valign="top">
-						<?php echo $data['name'] ?> <?php echo $data['type']; ?> (<?php echo ucwords($data['gender']); ?>-<?php echo ucwords($data['category']) ?>)<br />
+						<?php echo $data['name_product'] ?> <?php echo $data['type']; ?> (<?php echo ucwords($data['gender']); ?>-<?php echo ucwords($data['category']) ?>)<br />
 						<span class="descrip"><?php echo strlenProduct($data['description']); ?></span><br />
 						<span style="color:#0066FF">
 							<?php 
-								if($data['status'] == 1) {
+								if($data['status_product'] == 1) {
 									echo $data['stock']." Unit - Not Publish";
-								} elseif($data['status'] == 2) {
+								} elseif($data['status_product'] == 2) {
 									echo $data['stock']." Unit - Publish";
 								}
 							?>
@@ -102,16 +102,16 @@
 		</table>
 	<?php endif ?>
 
-	<table class="width">
+	<table width="95%" align="center">
 		<tr>
 			<td align="right">
 				<nav>
 					<ul class="pagination">
 						<?php
 							if(!empty($search)) {
-								$tampil2 = "SELECT * FROM product WHERE name LIKE '%$search%' OR type LIKE '%$search%'";
+								$tampil2 = "SELECT * FROM product WHERE name_product LIKE '%$search%' OR type LIKE '%$search%' ORDER BY created_time_product DESC";
 							} else {
-								$tampil2="SELECT * FROM product";
+								$tampil2="SELECT * FROM product ORDER BY created_time_product DESC";
 							}
 							$hasil2=mysql_query($tampil2); 
 							$jmldata=mysql_num_rows($hasil2); 
@@ -121,12 +121,12 @@
 						<?php if($halaman > 1): ?>
 							<?php $previous = $halaman-1; ?>
 							<?php if(!empty($search)): ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?search=$search&halaman=$previous" ?>&list=8&head=admin" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+								<li><a href="<?php echo "$_SERVER[PHP_SELF]?search=$search&halaman=$previous" ?>&list=8&head=admin" aria-label="Previous"><span aria-hidden="true">&lsaquo;&lsaquo;</span></a></li>
 							<?php else: ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?halaman=$previous" ?>&list=8&head=admin" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+								<li><a href="<?php echo "$_SERVER[PHP_SELF]?halaman=$previous" ?>&list=8&head=admin" aria-label="Previous"><span aria-hidden="true">&lsaquo;&lsaquo;</span></a></li>
 							<?php endif ?>
 						<?php else: ?>
-							<li class="disabled"><a href="" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+							<li class="disabled"><a href="" aria-label="Previous"><span aria-hidden="true">&lsaquo;&lsaquo;</span></a></li>
 						<?php endif ?>
 
 						<?php for($i=1;$i<=$jmlhalaman;$i++): ?>
@@ -146,12 +146,12 @@
 						<?php if($halaman < $jmlhalaman): ?>
 							<?php $next = $halaman+1; ?>
 							<?php if(!empty($search)): ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?search=$search&halaman=$next" ?>&list=8&head=admin" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+								<li><a href="<?php echo "$_SERVER[PHP_SELF]?search=$search&halaman=$next" ?>&list=8&head=admin" aria-label="Next"><span aria-hidden="true">&rsaquo;&rsaquo;</span></a></li>
 							<?php else: ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?halaman=$next" ?>&list=8&head=admin" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+								<li><a href="<?php echo "$_SERVER[PHP_SELF]?halaman=$next" ?>&list=8&head=admin" aria-label="Next"><span aria-hidden="true">&rsaquo;&rsaquo;</span></a></li>
 							<?php endif ?>
 						<?php else: ?>
-							<li class="disabled"><a href="" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+							<li class="disabled"><a href="" aria-label="Next"><span aria-hidden="true">&rsaquo;&rsaquo;</span></a></li>
 						<?php endif ?>
 					</ul>
 			   	</nav>
@@ -160,33 +160,3 @@
 	</table>
 </form>
 <?php } ?>
-<script>
-	// $(function() {
-	//     $('.show').click(function(evt){
-	//     	var 
-	//     	$parentShow = $(evt.target).parents('.textKA');
-
-	//     	$parentShow.find('.text-area').slideDown(1);
-	//     	$parentShow.find('.showArea').hide();
-	//     	$parentShow.find('.hideArea').show();
-	// 	});
-
-	//     $('.hide').click(function(evt){
-	//     	var 
-	//     	$parentHide = $(evt.target).parents('.textKA');
-
-	//     	$parentHide.find('.text-area').slideUp(1,"linear");
-	//     	$parentHide.find('.showArea').show();
-	//     	$parentHide.find('.hideArea').hide();
-	//     });
-	// });
-
-	// function validasi(form) {
-	// 	if (form.search.value == 0){
-	// 		alert("Silahkan masukan nama produk yang anda cari.");
-	// 		form.search.focus();
-	// 		return (false);
-	// 	}
-	// 	return (true);  
-	// }
-</script>

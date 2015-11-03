@@ -1,10 +1,10 @@
 <?php 
 	if(!isset($_SESSION['user'])) {
 	  	echo "<script>window.alert('Anda Harus Login Dulu');</script>";
-		echo "<script>window.location = 'index.php?list=5&head=home';</script>";
+		echo "<script>window.location = 'index.php?list=5&head=admin';</script>";
 	} else {
 
-	$query = "SELECT * FROM vendor ORDER BY name ASC";
+	$query = "SELECT * FROM vendor ORDER BY name_vendor ASC";
 	$sql = mysql_query($query);
 ?>
 <form action="process/add_product.php" method="post" enctype="multipart/form-data" onsubmit="return validasi(this)">
@@ -56,6 +56,11 @@
 			<td></td>
 			<td>Stok &nbsp;</td>
 			<td><input type="number" class="input" name="stock" placeholder="Stok"></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>Berat &nbsp;</td>
+			<td><input type="text" class="input" name="weight" placeholder="Berat"></td>
 		</tr>
 		<tr>
 			<td width="20%"></td>

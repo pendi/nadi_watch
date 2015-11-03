@@ -8,13 +8,14 @@ $color = $_POST['color'];
 $price = $_POST['price'];
 $description = $_POST['description'];
 $stock = $_POST['stock'];
+$weight = $_POST['weight'];
 $gender = $_POST['gender'];
 $category = $_POST['category'];
 $fileSize = $_FILES["image"]["size"];
 
-$select = mysql_query("SELECT name FROM vendor WHERE id='$vendor'");
+$select = mysql_query("SELECT name_vendor FROM vendor WHERE id_vendor='$vendor'");
 $data = mysql_fetch_array($select);
-$data['name'] = strtolower($data['name']);
+$data['name'] = strtolower($data['name_vendor']);
 
 if((!file_exists("../image/product/".$data['name']))&&(!is_dir("../image/product/".$data['name'])))
 {
@@ -28,9 +29,9 @@ $name_img = "../image/product/".$data['name']."/".$_FILES["image"]["name"];
 if ($fileSize > 0) {
 	move_uploaded_file($tmp_name, $name_img);
 	
-	$query = "UPDATE product SET name='$name',type='$type',color='$color',price='$price',description='$description',stock='$stock',gender='$gender',image='$name_img',category='$category',vendor_id='$vendor' WHERE id_product='$id'";
+	$query = "UPDATE product SET name_product='$name',type='$type',color='$color',price='$price',description='$description',stock='$stock',weight_product='$weight',gender='$gender',image='$name_img',category='$category',id_vendor='$vendor' WHERE id_product='$id'";
 } else {
-	$query = "UPDATE product SET name='$name',type='$type',color='$color',price='$price',description='$description',stock='$stock',gender='$gender',category='$category',vendor_id='$vendor' WHERE id_product='$id'";
+	$query = "UPDATE product SET name_product='$name',type='$type',color='$color',price='$price',description='$description',stock='$stock',weight_product='$weight',gender='$gender',category='$category',id_vendor='$vendor' WHERE id_product='$id'";
 }
 
 $hasil = mysql_query($query);

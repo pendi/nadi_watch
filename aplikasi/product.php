@@ -29,11 +29,6 @@
 <?php
 
 	$batas = 10;
-	if(isset($_GET['search'])) {
-		$search = $_GET['search'];
-	} else { 
-		$search = "";
-	}
 
 	// $halaman = $_GET['halaman'];
 	if(isset($_GET['halaman'])) { 
@@ -48,7 +43,14 @@
 		$by = ""; 
 	}
 
-	$gender = $_GET['gen'];
+	// $gen = $_GET['gen']
+	if(isset($_GET['gen'])) { 
+		$gen = $_GET['gen']; 
+	} else { 
+		$gen = "";
+	}
+
+	$vendor = $_GET['vendor'];
 	$category = $_GET['cat'];
 
 	if(empty($halaman)){ 
@@ -59,24 +61,33 @@
 	    $posisi = ($halaman-1) * $batas; 
 	}
 
-	$order = "created_time";
+	$order = "created_time_product";
 	$type = "type";
 	$pos = "desc";
 	if ($by == "az") {
-		$order = "name";
+		$order = "name_product";
 		$type = "type";
 		$pos = "asc";
 	} elseif ($by == "za") {
-		$order = "name";
+		$order = "name_product";
 		$type = "type";
+		$pos = "desc";
+	} elseif ($by == "sale") {
+		$order = "sale_product";
+		$pos = "desc";
+	} elseif ($by == "lower") {
+		$order = "price";
+		$pos = "asc";
+	} elseif ($by == "higher") {
+		$order = "price";
 		$pos = "desc";
 	}
 
-	if (!empty($search)) {
-		$sql = mysql_query("SELECT * FROM product WHERE status = 2 AND name LIKE '%$search%' AND gender = '$gender' AND category = '$category' OR type LIKE '%$search%' AND status = 2 AND gender = '$gender' AND category = '$category' ORDER BY $order $pos,$type $pos LIMIT $posisi,$batas");
+	if (!empty($gen)) {
+		$sql = mysql_query("SELECT * FROM product WHERE status_product = 2 AND gender = '$gen' AND category = '$category' AND id_vendor = '$vendor' ORDER BY $order $pos,$type $pos LIMIT $posisi,$batas");
 		$jumlah = mysql_num_rows($sql);
 	} else {
-		$sql = mysql_query("SELECT * FROM product WHERE status = 2 AND gender = '$gender' AND category = '$category' ORDER BY $order $pos,$type $pos LIMIT $posisi,$batas");
+		$sql = mysql_query("SELECT * FROM product WHERE status_product = 2 AND id_vendor = '$vendor' AND category = '$category' ORDER BY $order $pos,$type $pos LIMIT $posisi,$batas");
 		$jumlah = mysql_num_rows($sql);
 	}
 ?>
@@ -89,23 +100,23 @@
 					<hr/>
 					Sort By: &nbsp;&nbsp;
 					<select size="0" name="by">
+						<option value="">-- Pilih --</option>
 						<option value="sale" <?php if($by=="sale"){echo "selected";} ?>>Penjualan</option>
 						<option value="az" <?php if($by=="az"){echo "selected";} ?>>A-Z</option>
 						<option value="za" <?php if($by=="za"){echo "selected";} ?>>Z-A</option>
 						<option value="lower" <?php if($by=="lower"){echo "selected";} ?>>Harga Terendah</option>
 						<option value="higher" <?php if($by=="higher"){echo "selected";} ?>>Harga Tertinggi</option>
+					</select> &nbsp;&nbsp;&nbsp;
+					Pemakai: &nbsp;&nbsp;
+					<select size="0" name="gen">
+						<option value="">-- Pilih --</option>
+						<option value="pria" <?php if($gen=="pria"){echo "selected";} ?>>Pria</option>
+						<option value="wanita" <?php if($gen=="wanita"){echo "selected";} ?>>Wanita</option>
 					</select>&nbsp;
-					<?php if(!empty($search)): ?>
-						<input type="hidden" name="search" value="<?php echo $search; ?>">
-						<input type="hidden" name="list" value="30">
-						<input type="hidden" name="cat" value="<?php echo $category ?>">
-						<input type="hidden" name="gen" value="<?php echo $gender ?>">
-					<?php else: ?>
-						<input type="hidden" name="list" value="30">
-						<input type="hidden" name="cat" value="<?php echo $category ?>">
-						<input type="hidden" name="gen" value="<?php echo $gender ?>">
-					<?php endif ?>
-					<input type="submit" class="button round sort" value="Sort">
+					<input type="hidden" name="list" value="30">
+					<input type="hidden" name="cat" value="<?php echo $category ?>">
+					<input type="hidden" name="vendor" value="<?php echo $vendor ?>">
+					<input type="submit" class="button round sort" value="Pilih">
 					<hr/>					
 				</form>
 			</td>
@@ -116,19 +127,19 @@
 			
 		<tr>
 			<td class="padding-left" colspan="3">			
-				<p><a href="index.php?list=24&id_product=<?php echo $r[0] ?>" class="href ref"><?php echo $r["name"]; ?>&nbsp;<?php echo $r['type']; ?></a></p>
+				<p><a href="index.php?list=24&id_product=<?php echo $r[0] ?>" class="href ref"><?php echo $r["name_product"]; ?>&nbsp;<?php echo $r['type']; ?></a></p>
 			</td>
 		</tr>
 		<tr>
 			<td class="padding-left" width="128px">
-				<?php if (!empty($r['image'])): ?>				
-					<a href="index.php?list=24&id_product=<?php echo $r[0] ?>"><img class="scale" src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/'.$r['image']; ?>" width="120px" height="120px"></a>
+				<?php if (!empty($r['image_product'])): ?>				
+					<a href="index.php?list=24&id_product=<?php echo $r[0] ?>"><img class="scale" src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/'.$r['image_product']; ?>" width="120px" height="120px"></a>
 				<?php else : ?>
 					<a href="index.php?list=24&id_product=<?php echo $r[0] ?>"><img src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].'/nadi_watch/image/product/no-image.jpg' ?>" width="120px" height="120px"></a>
 				<?php endif ?>
 			</td>
 			<td style="vertical-align: top; font-size: 14px;" colspan="2" class="padding-right">
-				<span class="category">Jam Tangan <?php echo ucfirst($gender)?> <?php echo ucfirst($category) ?></span><br /><span><?php echo $r["description"]; ?></span>
+				<span class="category">Jam Tangan <?php echo ucfirst($r['gender'])?> <?php echo ucfirst($r['category']) ?></span><br /><span><?php echo $r["description"]; ?></span>
 			</td>
 		</tr>
 		<tr>
@@ -157,10 +168,10 @@
 				<nav>
 					<ul class="pagination">
 						<?php
-							if(!empty($search)) {
-								$tampil2 = "SELECT * FROM product WHERE status = 2 AND name LIKE '%$search%' AND gender = '$gender' AND category = '$category' OR type LIKE '%$search%' AND status = 2 AND gender = '$gender' AND category = '$category'";
+							if(!empty($gen)) {
+								$tampil2 = "SELECT * FROM product WHERE status_product = 2 AND gender = '$gen' AND category = '$category' AND id_vendor = '$vendor'";
 							} else {
-								$tampil2 = "SELECT * FROM product WHERE status = 2 AND gender = '$gender' AND category = '$category'";
+								$tampil2 = "SELECT * FROM product WHERE status_product = 2 AND id_vendor = '$vendor' AND category = '$category'";
 							}
 							$hasil2=mysql_query($tampil2); 
 							$jmldata=mysql_num_rows($hasil2); 
@@ -169,11 +180,7 @@
 
 						<?php if($halaman > 1): ?>
 							<?php $previous = $halaman-1; ?>
-							<?php if(!empty($search)): ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=30&search=$search&halaman=$previous&by=$by&cat=$category&gen=$gender" ?>" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
-							<?php else: ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=30&halaman=$previous&by=$by&cat=$category&gen=$gender" ?>" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
-							<?php endif ?>
+							<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=30&halaman=$previous&by=$by&cat=$category&gen=$gen&vendor=$vendor" ?>" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
 						<?php else: ?>
 							<li class="disabled"><a href="" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
 						<?php endif ?>
@@ -181,11 +188,7 @@
 						<?php for($i=1;$i<=$jmlhalaman;$i++): ?>
 							<?php if($i>=($halaman-3) && $i <= ($halaman+3)): ?>
 								<?php if ($i != $halaman): ?>
-									<?php if(!empty($search)): ?>
-										<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=30&search=$search&halaman=$i&by=$by&cat=$category&gen=$gender" ?>"><?php echo $i; ?></a></li>
-									<?php else: ?>
-										<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=30&halaman=$i&by=$by&cat=$category&gen=$gender" ?>"><?php echo $i; ?></a></li>
-									<?php endif ?>
+									<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=30&halaman=$i&by=$by&cat=$category&gen=$gen&vendor=$vendor" ?>"><?php echo $i; ?></a></li>
 								<?php else: ?>
 									<li class="active"><a><?php echo $i; ?></a></li>
 								<?php endif ?>
@@ -194,11 +197,7 @@
 
 						<?php if($halaman < $jmlhalaman): ?>
 							<?php $next = $halaman+1; ?>
-							<?php if(!empty($search)): ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=30&search=$search&halaman=$next&by=$by&cat=$category&gen=$gender" ?>" aria-label="Next"><span aria-hidden="true">»</span></a></li>
-							<?php else: ?>
-								<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=30&halaman=$next&by=$by&cat=$category&gen=$gender" ?>" aria-label="Next"><span aria-hidden="true">»</span></a></li>
-							<?php endif ?>
+							<li><a href="<?php echo "$_SERVER[PHP_SELF]?list=30&halaman=$next&by=$by&cat=$category&gen=$gen&vendor=$vendor" ?>" aria-label="Next"><span aria-hidden="true">»</span></a></li>
 						<?php else: ?>
 							<li class="disabled"><a href="" aria-label="Next"><span aria-hidden="true">»</span></a></li>
 						<?php endif ?>
@@ -210,7 +209,7 @@
 <?php else: ?>
 	<table class="width">
 		<tr>
-			<td class="search-error">Maaf, <span style="font-weight:bold"><?php echo $search; ?></span> tidak ditemukan.</td>
+			<td class="search-error">Maaf, produk tidak tersedia.</td>
 		</tr>
 	</table>
 <?php endif ?>
